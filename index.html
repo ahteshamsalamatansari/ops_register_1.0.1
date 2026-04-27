@@ -1,0 +1,3906 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Operations Team Register — BizProspex</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="https://bizprospex.com/wp-content/uploads/2019/09/cropped-bizprospex-Favicon-1-32x32.png">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=JetBrains+Mono:wght@300;400;500;600&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap');
+
+    /* ══════════════════════════════════════
+   TOKENS
+══════════════════════════════════════ */
+    :root {
+      --bg: #0b0e13;
+      --bg2: #0f1319;
+      --surface: #13181f;
+      --surface2: #181e27;
+      --surface3: #1d2430;
+      --glass: rgba(19, 24, 31, 0.85);
+      --border: rgba(255, 255, 255, 0.06);
+      --border2: rgba(255, 255, 255, 0.1);
+      --gold: #c9a84c;
+      --gold2: #e8c96a;
+      --gold3: #f5e0a0;
+      --gold-dim: rgba(201, 168, 76, 0.15);
+      --ivory: #f0ead8;
+      --ivory2: #c8bfaa;
+      --ivory3: #7a7060;
+      --red: #c0392b;
+      --red2: #e74c3c;
+      --red-dim: rgba(192, 57, 43, 0.15);
+      --green: #27ae60;
+      --green2: #2ecc71;
+      --green-dim: rgba(39, 174, 96, 0.15);
+      --blue: #2980b9;
+      --blue2: #3498db;
+      --blue-dim: rgba(41, 128, 185, 0.15);
+      --amber: #e67e22;
+      --amber-dim: rgba(230, 126, 34, 0.15);
+      --purple: #8e44ad;
+      --purple-dim: rgba(142, 68, 173, 0.15);
+      --teal: #16a085;
+      --teal-dim: rgba(22, 160, 133, 0.15);
+      --warn: #f39c12;
+      --warn-dim: rgba(243, 156, 18, 0.15);
+      --shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+      --shadow2: 0 2px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 14px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--ivory);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Noise texture overlay ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.025;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    /* ── Radial glow bg ── */
+    body::after {
+      content: '';
+      position: fixed;
+      top: -30vh;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80vw;
+      height: 60vh;
+      background: radial-gradient(ellipse, rgba(201, 168, 76, 0.04) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ══════════════════════════════════════
+   SCROLLBAR
+══════════════════════════════════════ */
+    ::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--gold-dim);
+      border-radius: 2px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--gold);
+    }
+
+    /* ══════════════════════════════════════
+   ADD MEMBER MODAL
+══════════════════════════════════════ */
+    .am-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.82);
+      backdrop-filter: blur(10px) saturate(1.3);
+      z-index: 400;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.22s;
+    }
+
+    .am-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .am-modal {
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 520px;
+      overflow: hidden;
+      box-shadow: 0 32px 80px rgba(0, 0, 0, 0.7);
+      transform: translateY(24px) scale(0.97);
+      transition: transform 0.22s;
+    }
+
+    .am-overlay.open .am-modal {
+      transform: translateY(0) scale(1);
+    }
+
+    .am-head {
+      padding: 22px 26px 18px;
+      background: linear-gradient(135deg, rgba(201, 168, 76, 0.08) 0%, rgba(22, 160, 133, 0.06) 100%);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .am-head-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.01em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 4px;
+    }
+
+    .am-head-sub {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      color: var(--ivory3);
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .am-close {
+      width: 30px;
+      height: 30px;
+      background: var(--surface3);
+      border: 1px solid var(--border2);
+      border-radius: 7px;
+      color: var(--ivory2);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+      flex-shrink: 0;
+      transition: all 0.15s;
+    }
+
+    .am-close:hover {
+      border-color: var(--red);
+      color: var(--red);
+      background: var(--red-dim);
+    }
+
+    .am-body {
+      padding: 22px 26px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Live Preview Card */
+    .am-preview {
+      background: var(--surface2);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-height: 70px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+
+    .am-preview::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      border-radius: 12px 0 0 12px;
+      background: var(--gold);
+      transition: background 0.2s;
+    }
+
+    .am-preview.team-pinnacle::before {
+      background: var(--teal);
+    }
+
+    .am-prev-av {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 17px;
+      font-weight: 700;
+      flex-shrink: 0;
+      background: var(--surface3);
+      color: var(--ivory3);
+      transition: all 0.2s;
+      letter-spacing: 0;
+    }
+
+    .am-prev-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .am-prev-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--ivory);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.2;
+      margin-bottom: 5px;
+    }
+
+    .am-prev-name.placeholder {
+      color: var(--ivory3);
+      font-style: italic;
+      font-size: 13px;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .am-prev-tags {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .am-prev-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 4px;
+      border: 1px solid;
+    }
+
+    .am-prev-id {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--ivory3);
+      background: var(--surface3);
+      border: 1px solid var(--border);
+      padding: 3px 9px;
+      border-radius: 4px;
+      flex-shrink: 0;
+      margin-left: auto;
+    }
+
+    /* Team selector */
+    .am-team-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .am-team-opt {
+      padding: 12px 14px;
+      background: var(--surface2);
+      border: 1.5px solid var(--border2);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .am-team-opt:hover {
+      border-color: var(--border2);
+      transform: translateY(-1px);
+    }
+
+    .am-team-opt.sel-impact {
+      border: 2px solid var(--gold);
+      background: var(--gold-dim);
+    }
+
+    .am-team-opt.sel-pinnacle {
+      border: 2px solid var(--teal);
+      background: var(--teal-dim);
+    }
+
+    .am-team-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .am-team-dot.impact {
+      background: var(--gold);
+      box-shadow: 0 0 8px var(--gold);
+    }
+
+    .am-team-dot.pinnacle {
+      background: var(--teal);
+      box-shadow: 0 0 8px var(--teal);
+    }
+
+    .am-team-name {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: var(--ivory2);
+      text-transform: uppercase;
+    }
+
+    .am-team-opt.sel-impact .am-team-name {
+      color: var(--gold);
+    }
+
+    .am-team-opt.sel-pinnacle .am-team-name {
+      color: var(--teal);
+    }
+
+    .am-team-count {
+      margin-left: auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      color: var(--ivory3);
+    }
+
+    /* Designation grid */
+    .am-desig-grid {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+
+    .am-desig-btn {
+      padding: 8px 0;
+      border-radius: 7px;
+      border: 1.5px solid var(--border2);
+      background: var(--surface2);
+      color: var(--ivory2);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      transition: all 0.15s;
+      flex: 1;
+      text-align: center;
+      min-width: 52px;
+    }
+
+    .am-desig-btn:hover {
+      transform: translateY(-1px);
+      border-color: var(--border2);
+    }
+
+    .am-desig-btn[data-desig="TL"].am-sel {
+      border-color: var(--gold);
+      background: var(--gold-dim);
+      color: var(--gold);
+      border-width: 2px;
+    }
+
+    .am-desig-btn[data-desig="L1"].am-sel {
+      border-color: var(--green2);
+      background: var(--green-dim);
+      color: var(--green2);
+      border-width: 2px;
+    }
+
+    .am-desig-btn[data-desig="L2"].am-sel {
+      border-color: var(--blue2);
+      background: var(--blue-dim);
+      color: var(--blue2);
+      border-width: 2px;
+    }
+
+    .am-desig-btn[data-desig="L3"].am-sel {
+      border-color: var(--ivory2);
+      background: var(--surface3);
+      color: var(--ivory);
+      border-width: 2px;
+    }
+
+    .am-desig-btn[data-desig="L4"].am-sel {
+      border-color: var(--amber);
+      background: var(--amber-dim);
+      color: var(--amber);
+      border-width: 2px;
+    }
+
+    /* Label row */
+    .am-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      color: var(--ivory3);
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      margin-bottom: 7px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .am-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* Name input */
+    .am-name-input {
+      width: 100%;
+      background: var(--surface2);
+      border: 1.5px solid var(--border2);
+      border-radius: 9px;
+      padding: 11px 14px;
+      color: var(--ivory);
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .am-name-input:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.1);
+    }
+
+    .am-name-input::placeholder {
+      color: var(--ivory3);
+      font-style: italic;
+      font-size: 14px;
+    }
+
+    .am-name-input.am-err {
+      border-color: var(--red2) !important;
+      box-shadow: 0 0 0 3px var(--red-dim) !important;
+    }
+
+    /* Grid 2-col for date + ID */
+    .am-row2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .am-date-input {
+      width: 100%;
+      background: var(--surface2);
+      border: 1.5px solid var(--border2);
+      border-radius: 9px;
+      padding: 10px 14px;
+      color: var(--ivory);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .am-date-input:focus {
+      border-color: var(--gold);
+    }
+
+    .am-id-display {
+      background: var(--surface3);
+      border: 1.5px solid var(--border);
+      border-radius: 9px;
+      padding: 10px 14px;
+      color: var(--gold);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .am-id-display span {
+      color: var(--ivory3);
+      font-size: 9px;
+      letter-spacing: 0.12em;
+    }
+
+    /* Error */
+    .am-error {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--red2);
+      letter-spacing: 0.06em;
+      min-height: 14px;
+      margin-top: -8px;
+    }
+
+    /* Footer */
+    .am-footer {
+      padding: 14px 26px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border-top: 1px solid var(--border);
+      background: var(--bg2);
+    }
+
+    .am-cancel {
+      padding: 9px 20px;
+      border-radius: 8px;
+      background: transparent;
+      border: 1px solid var(--border2);
+      color: var(--ivory2);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .am-cancel:hover {
+      border-color: var(--red);
+      color: var(--red);
+      background: var(--red-dim);
+    }
+
+    .am-save {
+      padding: 10px 28px;
+      border-radius: 8px;
+      background: var(--gold);
+      border: none;
+      color: #0b0e13;
+      font-family: 'Playfair Display', serif;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .am-save:hover {
+      background: var(--gold2);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(201, 168, 76, 0.35);
+    }
+
+    .am-save:disabled {
+      background: var(--surface3);
+      color: var(--ivory3);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* Remove btn on sidebar */
+    .emp-remove-btn {
+      width: 20px;
+      height: 20px;
+      background: transparent;
+      border: none;
+      color: var(--ivory3);
+      cursor: pointer;
+      border-radius: 4px;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: all 0.15s;
+      flex-shrink: 0;
+    }
+
+    .emp-row:hover .emp-remove-btn {
+      opacity: 1;
+    }
+
+    .emp-remove-btn:hover {
+      background: var(--red-dim);
+      color: var(--red2);
+    }
+
+    /* ══════════════════════════════════════
+   HEADER
+══════════════════════════════════════ */
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      height: 64px;
+      background: rgba(11, 14, 19, 0.92);
+      backdrop-filter: blur(20px) saturate(1.4);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-emblem {
+      width: 38px;
+      height: 38px;
+      border: 1.5px solid var(--gold);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .brand-emblem::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--gold-dim), transparent);
+    }
+
+    .brand-emblem span {
+      font-family: 'Playfair Display', serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--gold);
+      position: relative;
+      z-index: 1;
+      letter-spacing: -0.5px;
+    }
+
+    .brand-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--ivory);
+      letter-spacing: 0.02em;
+    }
+
+    .brand-sub {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      color: var(--ivory3);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .header-center {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .header-pill {
+      padding: 4px 12px;
+      border-radius: 20px;
+      border: 1px solid var(--border2);
+      background: var(--surface);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--ivory3);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .header-pill:hover,
+    .header-pill.active {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: var(--gold-dim);
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .live-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--green2);
+      letter-spacing: 0.1em;
+    }
+
+    .live-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--green2);
+      animation: livePulse 2s ease-in-out infinite;
+    }
+
+    @keyframes livePulse {
+
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.4);
+      }
+
+      50% {
+        box-shadow: 0 0 0 5px rgba(46, 204, 113, 0);
+      }
+    }
+
+    .header-clock {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--ivory2);
+      letter-spacing: 0.06em;
+    }
+
+    .add-emp-btn {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 18px;
+      background: var(--gold);
+      border: none;
+      border-radius: 8px;
+      color: #0b0e13;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.02em;
+    }
+
+    .add-emp-btn:hover {
+      background: var(--gold2);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(201, 168, 76, 0.35);
+    }
+
+    /* ══════════════════════════════════════
+   LAYOUT
+══════════════════════════════════════ */
+    .layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      min-height: 100vh;
+      padding-top: 64px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ══════════════════════════════════════
+   SIDEBAR
+══════════════════════════════════════ */
+    .sidebar {
+      background: var(--bg2);
+      border-right: 1px solid var(--border);
+      height: calc(100vh - 64px);
+      position: sticky;
+      top: 64px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .sidebar-top {
+      padding: 20px 20px 0;
+      flex-shrink: 0;
+    }
+
+    /* ── TEAM BADGES in sidebar ── */
+    .er-meta {
+      flex-wrap: wrap;
+      gap: 4px !important;
+    }
+
+    /* ── DESIG BADGE color tiers ── */
+    .desig-tl {
+      color: var(--gold) !important;
+    }
+
+    .desig-l1 {
+      color: var(--green2) !important;
+    }
+
+    .desig-l2 {
+      color: var(--blue2) !important;
+    }
+
+    .desig-l3 {
+      color: var(--ivory2) !important;
+    }
+
+    .desig-l4 {
+      color: var(--ivory3) !important;
+    }
+
+    /* ── HERO team chip ── */
+    .hero-team-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      border: 1px solid;
+    }
+
+    font-family: 'Playfair Display',
+    serif;
+    font-size: 11px;
+    font-style: italic;
+    color: var(--ivory3);
+    letter-spacing: 0.1em;
+    margin-bottom: 12px;
+    }
+
+    .search-box {
+      position: relative;
+      margin-bottom: 14px;
+    }
+
+    .search-box input {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: 8px;
+      padding: 9px 12px 9px 36px;
+      color: var(--ivory);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-box input:focus {
+      border-color: var(--gold);
+    }
+
+    .search-box input::placeholder {
+      color: var(--ivory3);
+    }
+
+    .search-box::before {
+      content: '⌕';
+      position: absolute;
+      left: 11px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--ivory3);
+      font-size: 16px;
+      pointer-events: none;
+    }
+
+    .sidebar-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .sstat {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+    }
+
+    .sstat-val {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 1;
+      display: block;
+    }
+
+    .sstat-lbl {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      color: var(--ivory3);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      display: block;
+      margin-top: 3px;
+    }
+
+    .sidebar-section-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      color: var(--ivory3);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 0 20px 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .sidebar-section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .emp-list {
+      overflow-y: auto;
+      flex: 1;
+      padding: 0 0 20px;
+    }
+
+    .emp-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+      border-left: 2px solid transparent;
+      position: relative;
+    }
+
+    .emp-row::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 20px;
+      right: 20px;
+      height: 1px;
+      background: var(--border);
+      opacity: 0.5;
+    }
+
+    .emp-row:hover {
+      background: rgba(201, 168, 76, 0.04);
+    }
+
+    .emp-row.active {
+      background: var(--gold-dim);
+      border-left-color: var(--gold);
+    }
+
+    .emp-row.active .er-name {
+      color: var(--gold);
+    }
+
+    .er-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 13px;
+      font-weight: 700;
+      flex-shrink: 0;
+      letter-spacing: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .er-avatar::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent);
+    }
+
+    .er-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .er-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ivory);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.3;
+    }
+
+    .er-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      color: var(--ivory3);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 1px;
+    }
+
+    .er-warn-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--warn);
+      flex-shrink: 0;
+    }
+
+    .er-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    /* ══════════════════════════════════════
+   MAIN CONTENT
+══════════════════════════════════════ */
+    .main {
+      overflow-y: auto;
+      height: calc(100vh - 64px);
+      position: relative;
+    }
+
+    /* ── WELCOME STATE ── */
+    .welcome {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      gap: 16px;
+      text-align: center;
+      padding: 40px;
+    }
+
+    .welcome-emblem {
+      width: 80px;
+      height: 80px;
+      border: 1px solid var(--border2);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      margin-bottom: 8px;
+      background: var(--surface);
+      animation: floatUp 3s ease-in-out infinite;
+    }
+
+    @keyframes floatUp {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-8px);
+      }
+    }
+
+    .welcome h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--ivory);
+    }
+
+    .welcome p {
+      font-size: 14px;
+      color: var(--ivory3);
+      max-width: 380px;
+      line-height: 1.7;
+    }
+
+    /* ── EMPLOYEE VIEW ── */
+    .emp-view {
+      display: none;
+      flex-direction: column;
+    }
+
+    .emp-view.active {
+      display: flex;
+    }
+
+    /* ── EMP HERO ── */
+    .emp-hero {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 28px 36px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .emp-hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 40%;
+      height: 100%;
+      background: linear-gradient(135deg, transparent, var(--gold-dim) 100%);
+      pointer-events: none;
+    }
+
+    .emp-hero-grill {
+      position: absolute;
+      right: 36px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: grid;
+      grid-template-columns: repeat(8, 8px);
+      gap: 4px;
+      opacity: 0.06;
+    }
+
+    .emp-hero-grill span {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--gold);
+    }
+
+    .emp-hero-top {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      margin-bottom: 22px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .emp-hero-avatar {
+      width: 68px;
+      height: 68px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 26px;
+      font-weight: 700;
+      border: 2px solid rgba(201, 168, 76, 0.3);
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .emp-hero-avatar::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 13px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent);
+    }
+
+    .emp-hero-info {
+      flex: 1;
+    }
+
+    .emp-hero-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .emp-hero-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .emp-hero-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 3px;
+      border: 1px solid var(--border2);
+      color: var(--ivory3);
+    }
+
+    .emp-hero-actions {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .hero-action-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border2);
+      background: var(--surface2);
+      color: var(--ivory2);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .hero-action-btn:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: var(--gold-dim);
+    }
+
+    .hero-action-btn.primary {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: #0b0e13;
+      font-weight: 600;
+    }
+
+    .hero-action-btn.primary:hover {
+      background: var(--gold2);
+      border-color: var(--gold2);
+    }
+
+    .hero-action-btn.danger {
+      border-color: rgba(192, 57, 43, 0.4);
+      color: var(--red2);
+    }
+
+    .hero-action-btn.danger:hover {
+      background: var(--red-dim);
+      border-color: var(--red2);
+    }
+
+    /* KPI ROW */
+    .kpi-row {
+      display: flex;
+      gap: 12px;
+      position: relative;
+      z-index: 1;
+      flex-wrap: wrap;
+    }
+
+    .kpi-card {
+      flex: 1;
+      min-width: 100px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 16px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.2s;
+    }
+
+    .kpi-card:hover {
+      border-color: var(--border2);
+      transform: translateY(-1px);
+    }
+
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+    }
+
+    .kpi-card.gold::before {
+      background: var(--gold);
+    }
+
+    .kpi-card.red::before {
+      background: var(--red2);
+    }
+
+    .kpi-card.green::before {
+      background: var(--green2);
+    }
+
+    .kpi-card.blue::before {
+      background: var(--blue2);
+    }
+
+    .kpi-card.warn::before {
+      background: var(--warn);
+    }
+
+    .kpi-card.purple::before {
+      background: var(--purple);
+    }
+
+    .kpi-val {
+      font-family: 'Playfair Display', serif;
+      font-size: 26px;
+      font-weight: 700;
+      line-height: 1;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .kpi-card.gold .kpi-val {
+      color: var(--gold);
+    }
+
+    .kpi-card.red .kpi-val {
+      color: var(--red2);
+    }
+
+    .kpi-card.green .kpi-val {
+      color: var(--green2);
+    }
+
+    .kpi-card.blue .kpi-val {
+      color: var(--blue2);
+    }
+
+    .kpi-card.warn .kpi-val {
+      color: var(--warn);
+    }
+
+    .kpi-card.purple .kpi-val {
+      color: var(--purple);
+    }
+
+    .kpi-lbl {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      color: var(--ivory3);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      display: block;
+    }
+
+    /* ── TABS ── */
+    .tabs-bar {
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+      padding: 0 36px;
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      overflow-x: auto;
+    }
+
+    .tabs-bar::-webkit-scrollbar {
+      height: 0;
+    }
+
+    .tab-btn {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 14px 16px;
+      background: transparent;
+      border: none;
+      color: var(--ivory3);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+      white-space: nowrap;
+      margin-bottom: -1px;
+    }
+
+    .tab-btn:hover {
+      color: var(--ivory2);
+    }
+
+    .tab-btn.active {
+      color: var(--gold);
+      border-bottom-color: var(--gold);
+    }
+
+    .tab-btn .ticon {
+      font-size: 14px;
+    }
+
+    .tab-count {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      font-weight: 600;
+      padding: 1px 6px;
+      border-radius: 10px;
+      background: var(--surface3);
+      color: var(--ivory3);
+    }
+
+    .tab-btn.active .tab-count {
+      background: var(--gold-dim);
+      color: var(--gold);
+    }
+
+    /* ── TAB PANELS ── */
+    .tab-panels {
+      padding: 28px 36px;
+    }
+
+    .tab-panel {
+      display: none;
+      animation: panelIn 0.25s ease;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    @keyframes panelIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ── SECTION TITLE ── */
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--ivory);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-title .sticon {
+      font-size: 16px;
+    }
+
+    .section-sub {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--ivory3);
+      letter-spacing: 0.1em;
+    }
+
+    /* ── INCIDENT / ENTRY FORM ── */
+    .entry-form {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 22px;
+      margin-bottom: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .entry-form::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 3px;
+      height: 100%;
+    }
+
+    .entry-form.warning::before {
+      background: var(--warn);
+    }
+
+    .entry-form.incident::before {
+      background: var(--red2);
+    }
+
+    .entry-form.positive::before {
+      background: var(--green2);
+    }
+
+    .entry-form.note::before {
+      background: var(--blue2);
+    }
+
+    .form-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ivory);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .form-grid.full {
+      grid-template-columns: 1fr;
+    }
+
+    .form-grid.three {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .field-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      color: var(--ivory3);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .field-input,
+    .field-select,
+    .field-textarea {
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      border-radius: 7px;
+      padding: 9px 12px;
+      color: var(--ivory);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .field-input:focus,
+    .field-select:focus,
+    .field-textarea:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.08);
+    }
+
+    .field-input::placeholder,
+    .field-textarea::placeholder {
+      color: var(--ivory3);
+    }
+
+    .field-select {
+      cursor: pointer;
+    }
+
+    .field-select option {
+      background: var(--surface2);
+    }
+
+    .field-textarea {
+      resize: vertical;
+      min-height: 72px;
+      line-height: 1.5;
+    }
+
+    .form-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .form-btn {
+      padding: 8px 18px;
+      border-radius: 7px;
+      border: 1px solid var(--border2);
+      background: var(--surface2);
+      color: var(--ivory2);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .form-btn:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .form-btn.primary {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: #0b0e13;
+      font-weight: 600;
+    }
+
+    .form-btn.primary:hover {
+      background: var(--gold2);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(201, 168, 76, 0.3);
+    }
+
+    /* ── RECORDS LIST ── */
+    .records-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .record-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 14px;
+      align-items: start;
+      transition: all 0.2s;
+      animation: recordIn 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    @keyframes recordIn {
+      from {
+        opacity: 0;
+        transform: translateX(-8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .record-card:hover {
+      border-color: var(--border2);
+      transform: translateX(2px);
+    }
+
+    .record-card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 3px;
+      height: 100%;
+    }
+
+    .record-card.warning::before {
+      background: var(--warn);
+    }
+
+    .record-card.incident::before {
+      background: var(--red2);
+    }
+
+    .record-card.positive::before {
+      background: var(--green2);
+    }
+
+    .record-card.note::before {
+      background: var(--blue2);
+    }
+
+    .record-card.mail::before {
+      background: var(--purple);
+    }
+
+    .record-card.achievement::before {
+      background: var(--gold);
+    }
+
+    .record-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .record-icon.warning {
+      background: var(--warn-dim);
+    }
+
+    .record-icon.incident {
+      background: var(--red-dim);
+    }
+
+    .record-icon.positive {
+      background: var(--green-dim);
+    }
+
+    .record-icon.note {
+      background: var(--blue-dim);
+    }
+
+    .record-icon.mail {
+      background: var(--purple-dim);
+    }
+
+    .record-icon.achievement {
+      background: var(--gold-dim);
+    }
+
+    .record-body {
+      min-width: 0;
+    }
+
+    .record-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ivory);
+      margin-bottom: 4px;
+      line-height: 1.3;
+    }
+
+    .record-desc {
+      font-size: 13px;
+      color: var(--ivory2);
+      line-height: 1.6;
+      margin-bottom: 6px;
+    }
+
+    .record-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .record-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 3px;
+      border: 1px solid var(--border2);
+      color: var(--ivory3);
+    }
+
+    .record-tag.warn {
+      border-color: rgba(243, 156, 18, 0.3);
+      color: var(--warn);
+      background: var(--warn-dim);
+    }
+
+    .record-tag.red {
+      border-color: rgba(231, 76, 60, 0.3);
+      color: var(--red2);
+      background: var(--red-dim);
+    }
+
+    .record-tag.green {
+      border-color: rgba(46, 204, 113, 0.3);
+      color: var(--green2);
+      background: var(--green-dim);
+    }
+
+    .record-tag.blue {
+      border-color: rgba(52, 152, 219, 0.3);
+      color: var(--blue2);
+      background: var(--blue-dim);
+    }
+
+    .record-tag.gold {
+      border-color: rgba(201, 168, 76, 0.3);
+      color: var(--gold);
+      background: var(--gold-dim);
+    }
+
+    .record-tag.purple {
+      border-color: rgba(142, 68, 173, 0.3);
+      color: #b07fd4;
+      background: var(--purple-dim);
+    }
+
+    .record-meta {
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .record-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--gold);
+      letter-spacing: 0.06em;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .record-id {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      color: var(--ivory3);
+      letter-spacing: 0.06em;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .record-del {
+      width: 26px;
+      height: 26px;
+      background: transparent;
+      border: 1px solid var(--border2);
+      border-radius: 5px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--ivory3);
+      font-size: 12px;
+      transition: all 0.2s;
+      margin-left: auto;
+    }
+
+    .record-del:hover {
+      border-color: var(--red2);
+      color: var(--red2);
+      background: var(--red-dim);
+    }
+
+    /* ── WARNING STAMP ── */
+    .warning-stamp {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 4px;
+      border: 2px solid var(--warn);
+      color: var(--warn);
+      font-family: 'Playfair Display', serif;
+      font-size: 11px;
+      font-style: italic;
+      letter-spacing: 0.1em;
+      animation: stampIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes stampIn {
+      from {
+        transform: scale(0.6) rotate(-3deg);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+      }
+    }
+
+    /* ── ANALYTICS PANEL ── */
+    .analytics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .analytics-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .analytics-card.full {
+      grid-column: 1 / -1;
+    }
+
+    .ac-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ivory3);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .ac-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* Mini bar chart */
+    .mini-chart {
+      display: flex;
+      align-items: flex-end;
+      gap: 4px;
+      height: 60px;
+    }
+
+    .mc-bar {
+      flex: 1;
+      border-radius: 3px 3px 0 0;
+      min-height: 4px;
+      transition: all 0.3s ease;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .mc-bar:hover::after {
+      content: attr(data-val);
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      color: var(--ivory2);
+      white-space: nowrap;
+      background: var(--surface3);
+      padding: 2px 5px;
+      border-radius: 3px;
+    }
+
+    .mc-labels {
+      display: flex;
+      gap: 4px;
+      margin-top: 4px;
+    }
+
+    .mc-label {
+      flex: 1;
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8px;
+      color: var(--ivory3);
+    }
+
+    /* Donut */
+    .donut-wrap {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .donut-svg {
+      flex-shrink: 0;
+    }
+
+    .donut-legend {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .dl-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+    }
+
+    .dl-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .dl-label {
+      color: var(--ivory2);
+      flex: 1;
+    }
+
+    .dl-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--ivory);
+    }
+
+    /* Score trend line */
+    .trend-line {
+      height: 80px;
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+    }
+
+    .trend-svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* ── EVALUATION CARD ── */
+    .eval-summary {
+      background: linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%);
+      border: 1px solid var(--gold-dim);
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .eval-summary::after {
+      content: '"';
+      position: absolute;
+      right: 24px;
+      bottom: -10px;
+      font-family: 'Playfair Display', serif;
+      font-size: 120px;
+      color: var(--gold);
+      opacity: 0.06;
+      line-height: 1;
+    }
+
+    .eval-rating {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .eval-score-big {
+      font-family: 'Playfair Display', serif;
+      font-size: 56px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .eval-grade-info {
+      flex: 1;
+    }
+
+    .eval-grade {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .eval-grade-sub {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--ivory3);
+      letter-spacing: 0.1em;
+    }
+
+    .eval-bars {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .eval-bar-row {
+      display: grid;
+      grid-template-columns: 120px 1fr 40px;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .eval-bar-label {
+      font-size: 12px;
+      color: var(--ivory2);
+    }
+
+    .eval-bar-track {
+      height: 6px;
+      background: var(--surface3);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .eval-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 1s ease;
+    }
+
+    .eval-bar-pct {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--ivory3);
+      text-align: right;
+    }
+
+    /* ── DOCUMENT VAULT ── */
+    .vault-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .vault-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .vault-item:hover {
+      border-color: var(--gold-dim);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow2);
+    }
+
+    .vault-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .vault-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .vault-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ivory);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .vault-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      color: var(--ivory3);
+      margin-top: 2px;
+    }
+
+    /* ── TIMELINE ── */
+    .timeline {
+      position: relative;
+      padding-left: 28px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 8px;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: var(--border);
+    }
+
+    .tl-item {
+      position: relative;
+      margin-bottom: 18px;
+      animation: recordIn 0.3s ease;
+    }
+
+    .tl-dot {
+      position: absolute;
+      left: -23px;
+      top: 4px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 2px solid var(--bg2);
+    }
+
+    .tl-item.warning .tl-dot {
+      background: var(--warn);
+      box-shadow: 0 0 8px var(--warn);
+    }
+
+    .tl-item.incident .tl-dot {
+      background: var(--red2);
+      box-shadow: 0 0 8px var(--red2);
+    }
+
+    .tl-item.positive .tl-dot {
+      background: var(--green2);
+      box-shadow: 0 0 8px var(--green2);
+    }
+
+    .tl-item.note .tl-dot {
+      background: var(--blue2);
+    }
+
+    .tl-item.mail .tl-dot {
+      background: var(--purple);
+    }
+
+    .tl-item.achievement .tl-dot {
+      background: var(--gold);
+      box-shadow: 0 0 8px var(--gold);
+    }
+
+    .tl-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      color: var(--gold);
+      letter-spacing: 0.1em;
+      margin-bottom: 4px;
+    }
+
+    .tl-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ivory);
+      margin-bottom: 3px;
+    }
+
+    .tl-desc {
+      font-size: 12px;
+      color: var(--ivory2);
+      line-height: 1.5;
+    }
+
+    /* ── MODAL (Add Entry) ── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      z-index: 300;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: 16px;
+      padding: 28px;
+      max-width: 560px;
+      width: 90%;
+      transform: scale(0.94) translateY(12px);
+      transition: all 0.25s cubic-bezier(0.34, 1.2, 0.64, 1);
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+
+    .modal-overlay.open .modal {
+      transform: scale(1) translateY(0);
+    }
+
+    .modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 22px;
+    }
+
+    .modal-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--ivory);
+    }
+
+    .modal-close {
+      width: 32px;
+      height: 32px;
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      border-radius: 7px;
+      color: var(--ivory2);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      transition: all 0.2s;
+    }
+
+    .modal-close:hover {
+      border-color: var(--red2);
+      color: var(--red2);
+      background: var(--red-dim);
+    }
+
+    /* TYPE SELECTOR */
+    .type-selector {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .type-opt {
+      padding: 10px 8px;
+      border-radius: 8px;
+      border: 1px solid var(--border2);
+      background: var(--surface2);
+      color: var(--ivory3);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .type-opt .to-icon {
+      font-size: 18px;
+    }
+
+    .type-opt:hover {
+      border-color: var(--border2);
+      color: var(--ivory2);
+    }
+
+    .type-opt.selected {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: var(--gold-dim);
+    }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .empty-icon {
+      font-size: 36px;
+      opacity: 0.3;
+    }
+
+    .empty-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--ivory2);
+    }
+
+    .empty-sub {
+      font-size: 13px;
+      color: var(--ivory3);
+      max-width: 280px;
+      line-height: 1.6;
+    }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 9999;
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: 10px;
+      padding: 13px 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: var(--shadow);
+      transform: translateY(80px);
+      opacity: 0;
+      transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+      max-width: 360px;
+      font-size: 13px;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .toast.success {
+      border-color: var(--green2);
+    }
+
+    .toast.error {
+      border-color: var(--red2);
+    }
+
+    .toast.info {
+      border-color: var(--blue2);
+    }
+
+    .toast.warn {
+      border-color: var(--warn);
+    }
+
+    /* ── UTILITIES ── */
+    .mt8 {
+      margin-top: 8px;
+    }
+
+    .mt16 {
+      margin-top: 16px;
+    }
+
+    .mt24 {
+      margin-top: 24px;
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 20px 0;
+    }
+
+    .text-gold {
+      color: var(--gold);
+    }
+
+    .text-green {
+      color: var(--green2);
+    }
+
+    .text-red {
+      color: var(--red2);
+    }
+
+    .text-blue {
+      color: var(--blue2);
+    }
+
+    .text-warn {
+      color: var(--warn);
+    }
+
+    .text-ivory3 {
+      color: var(--ivory3);
+    }
+
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .serif {
+      font-family: 'Playfair Display', serif;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+</head>
+
+<body>
+
+  <!-- ══ HEADER ══ -->
+  <header class="header">
+    <div class="header-brand">
+      <img
+        src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAD+A0wDASIAAhEBAxEB/8QAHAABAAICAwEAAAAAAAAAAAAAAAUGAwQCBwgB/8QASxAAAgIBAgEGCAsGBAUEAwEAAAECAwQFEQYSITFBUWEHEyJUcZGhsRQVMjVScnOBwdHhFiNCYpKyCDM0kyRDU6LwRGOCwhcldIP/xAAaAQEAAgMBAAAAAAAAAAAAAAAAAwQCBQYB/8QAMBEAAgIBAQcDAwQDAQEBAAAAAAECAxEEBRITITFBUSIycTNSkRRhobFCgdEV8OH/2gAMAwEAAhEDEQA/APGQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM2Fi5Gbl1YmJTO++2ShXXBbuTfUj0D4MPBXgaLCrUuIK6s3UntKNUvKqofo6JS7+hdXaWtLpLNTLEenkranV16eOZdfB1fwX4MOKOJowyIY0cDClzrIyt4qS/lj0y93edtcPeAzhfEjGWrZeZqdvNulLxNfqjz/APcdm1szQZ0NOy6KlzWX+/8Aw56/ad9j5PC/b/pAYHg64FxYqNfC+nSS/wCtV41+uW5uT4C4JujyZ8KaMl/Lhwi/WkiagzPBlvgVrlur8FF325zvP8lB1jwKcA6lGTp0/I06xr5eLfJbP6st17DrLjDwAa7gQnk8OZ1WrVRW/iLEqrvu3fJl616D0jBmaDK1uz9PYvbj45FiraOoqfKWfnmeCdRwczTc2zC1DFuxcmp7Tqug4yi+9M1z27x5wPw/xrpzxtXxV4+MWqcutJXUvufWu58x5O8JXAms8Dax8D1CPjsW1t4uXBeRdH8JLrj71zmh1egnp/UucTf6LaMNT6Xyl4/4VMAFA2IAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALz4GOHIa5xUsnJrU8PT0rpprmlPfyI+tN/cS01SusUI9WR22qqDnLsdmeBfgiGg6fDWdRpT1TJhvFSXPjwf8PdJ9fq7d+zYM065GxXI7OmiNMFCPRHH32yum5yNuuRsQlstys8XcT6Zwro89S1KxpfJqqj8u2X0Yr8eo868ceEXiLim2dduTLDwG/JxKJNR2/mfTJ+nm7kVtXr69NyfN+CfS6GzU81yXk9K6nxzwjpNjrzuIcCuxdMI28uS9Kju0YMPwncB5FqrhxNhxb/AOopVr1ySR5ABqHtm3PKKNoti1Y5yZ7u07NxM6hZGFlUZVL6LKbFOL+9G7Bnhfh7XtZ4fzY5mjajkYVye7dcuaXdKPRJdzR6R8DvhbxeK7K9G1qFWHrG37uUeavJ26eTv0S/l6+rsV/S7True7JYZr9Xsuyhb0XlHbsWRfF/Dml8V6BkaLq1KsouXkyS8qqfVOL6mvzXQyRgzLFmxlFSWH0NWpOLyuqPDHHXDOocI8TZWh6jHeymW9diW0ba38ma7mvU911EGerP8TPB8Nd4NevYtW+oaQnNtLnnQ/lr7vlfdLtPKZyWt036e1x7djsdDqv1NSk+vcAAqFwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHoPwJaZHT+CachxStzbJXyfXt8mK9S3+88+HqjhuiOHoOn4sVsqsauG3oikbrYlalbKfhf2aja9jVaj5f9E1XIyu2FVcrLJKMIJylJvZJLpZqwZWfC7qM9O8HupTqe07oxoT7ptJ/9u50N01XBzfZGhrr4k1Bdzo7wk8U38V8S3ZjlJYdTdeJW+iME+nbtfS/V1FZAOHsnKyTlLqzsq4Rriox6IAAwMwc8e63HvrvoslVbXJThOL2cZJ7pp9pwAB7I8DXGH7ZcGUZ17j8Px34jMS5t5pLytuySafp3XUXiLPMf+FPVZ43GGoaS5PxWZieMS/nrktvZKR6ZgzrtDc7qFJ9ehxu0KFTe4rp1Od9NWTjW418I2VWwcLIPolFrZp/ceE+LtJnoPFGp6NZ04eVZSn2pSez+9bM92ctRW7Z1PxX4IND4k43z+ItSzsuNWU4S+C0JQ2agotuT333a35kiHaOklqIx3OqJ9mauOnlLf6NfyeVweuMHwXcCYFajXw9j3NdMr5Stb/qbRs2cD8Hcnk/sxpG3/wDJD8jXrY1veSNm9s1dos8fA9Uar4MuCM2DjLQ6aJdUsecq2vU9vYULibwI1cmVvD+qyi9t1RlrdPuU4rm9RHZsnUQWVh/BLXtWibw8o6UBK8R8Pazw9l/B9XwbceTfkTa3hP6slzMijWyi4vElhmyjJSWYvKAAMT0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHqzT7FPEpnHolXFr1HlM9KcB5yz+EdLyd928eMZP+aK5L9qZvthSW/OP7L/AO/k0u2Y+mEiywZSvDpGU/B/a10QyKpP0b7fiXGuRocXaX8ecMahpa25d9LVe/Qprnj7Ujd6qt2UyiurTNPp5qFsZPszyyDlbXOq2dVkXCcJOMotbNNdKOJwx2QAAAAAB2d/hnrnPwoVTim1XiXSl3LZL3tHq2tPbdnRX+E3huyGLqfFGRDkwuaxcbdfKUXypv0b8lelM75kdTsuDhp1nvzOT2rYp6lpduRhsMEzPMwTNia417DXsNLX+JNA0Rf/ALbWMLDl9C25KT9Eel+orkvCdwG58lcR4+/2dm3r5JhK6uLxKSX+yaFNklmMW/8ARZ7DWsNfS9d0XWYcvStUw8xdaqtUmvSulGxYSxkpLKZ44uLwyM1jAwtTw7MPUMarJx7F5Vdkd0/yfedC+Ezwc3cPqep6Ty8jTN95wfPOj09se/q6+09B29JqZEIzhKE4xlGSalFrdNdhX1Wjr1McS69mWtLq56eWY9PB5EBePCxwf+zuprNwa38WZUnyEv8Akz6XD0da+/sKOchdTKmbhPqjqqbY2wU49GAAREgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAO3/AVrEbNPytFsl+8on46pN9MJdKXof9x1ASfC+sX6FrmNqdG7dUvLhv8ALg/lR9Rb0Oo/T3Kb6d/grayjj1OHfsena5GxBkVpOfjajgUZ2JYrKLoKcJLs/Mka2dqmmso5Bpp4Z1J4aOCLY5FvEuk0udc/KzaoLni/+ol2Pr9fW9upj13BprZ86ZQOMfBTpOsWTzNIsWmZcnvKCjvTN/V/h+7m7jQ6/ZTnJ2U9+q/4brRbSUYqu38nQYLtqXgt4yw7Gq9OrzIdU8e6LT+5tP2GvjeDbje+xQjoN0d30zshFL1s0r0t6eNx/g261NLWd9fkqJZ/BxwZqfGvEFWnYUJV46knk5Lj5NMPxfYuv0bsv3CfgQyrbYXcSajXTUud4+K+VOXc5NbL7kzvzgXQ9M0TCWHpWHXi41K2jGC6ZPpbfS33sv6XZVk3vW8l/Jr9XtWEItVc3/BKaDpODoWi4mkabV4rExKlXXHr2XW+1t7tvtbNqRkkY5HRJJLCOYbbeWaeo5WPhYd2Xl3wox6YOdlk3tGMUt22zzZ4T/DTqeq326dwtZZp+npuLyVzXXd6f8C9HP3roJL/ABP8a236jHg3AuccehRtznF/Lm+eMH3JbP0tdh0aaDaOvlvOqt4S6nRbN2fHdVtiy30RzussutlbbZKyyT3lKT3bfa2cADSm8MmPddj3Rvx7bKbYPeM4ScZRfamug7Y8HXhby8e6vTeKbHkY0nyY5u3l1/X2+Uu/p9J1GCejU2US3oMgv09d8d2aPYnLhbXG2qcZwnFSjKL3TT6Gma9h1V4A+KrLoWcMZtrk64OzDlJ8/JXyofd0r7zta07DS6iOorU4nK6iiVFjgyE4p0nH1zRcnTMlLkXQ2jLbnhL+GS9D2PMmfi3YObfh5EeRdRZKua7Gnsz1ZadEeG3TY4fFkc2uKUM2lTe304+S/ZyfWa3bWnUq1auq5f6Njsi9qbrfRlDABzR0AAMmLWrsmqlvkqyajv2bvY9Sy8Axgsv7Mw88l/t/qP2Zh55L/b/Utfob/H9EfFh5K0Cy/szDzyX+3+o/ZmHnkv8Ab/Ufob/H9Diw8laBZf2Zh55L/b/UfszDzyX+3+o/Q3+P6HFh5K0CyPhmHVmS/wBv9TDbw1ek/FZNcvrJr8zx6K5f4jiw8kCDczNMzcVOVtEuSv4o86NMryhKLxJYM00+gABiegAyY1NmRfGmqPKnJ7JHqTbwgYwWbH4apVa8fkWOfXyNkl6zS1fQ54lTvom7ao/KTXlR7+8sS0dsY7zRGrYt4IYAFYkAAAAAAAAAAAAAJnSNFjn4fj3kOt8px2Ud/wATc/ZmHnkv9v8AUsx0d00pJciN2RTwytAsv7Mw88l/t/qP2Zh55L/b/Uy/Q3+P6HFh5K0Cy/szDzyX+3+o/ZmHnkv9v9R+hv8AH9Diw8laBZf2Zh55L/b/AFMc+GZfwZifpht+IeivX+P9Diw8leBLZHD+fVu4Ku1fyy5/aRl1VtM+RbXKuXZJbEE6pw9ywZqSfQ4AAjPQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC6+DLjOfD2V8BzpSnpl0t31umX0l3dq+/0974eRVkUQvoshbVZFShOL3Ul2pnlMtPBPGuqcM2KqD+E4DlvPHm+jtcX/AAv2G52dtPgrh2+3+v8A8NTrtncZ8Svr/Z6OhIz1sqnCnGOh8QQisPLjDIa58e18mxPuXX925Z4SOkhZCxb0HlGgnCUHuyWGblbNiuRpVyNiuR6yNm5Blh0GP/BSl9Kb9hWoSLNoD301d02Ysxl0NyRhyLI1VTtm9oQi5SfYkZ5GhrFc7tLzKa1vOdE4x9Li0YPoYR6nhniLUbdY17P1W5t2ZeRO579XKk3saB9aabTWzXM0fDh223lnepJLCAAPD0AAAl+DNQnpfFemZ0Ht4rJhyu+Le0l6mz1LYeS9NhK3UcauHyp3QivS2j1pYdFsNvdmvg0O2Ut6D+TWtOrPD5RGWk6bk7eVDIlXv3Sjv/8AU7TtOs/D01+zeFHreYn/ANkjZbRWdLMoaB41MDpgAHFnWg502SqthbD5UJKS9KOACeASq1/Ufp1v/wCBI6Lrd2TmRxsiEPL35Morbn7ysm/w/wDPGP8AWfuZbp1NvEinLuRyhHD5F2MOZfHFxbMiabUI77LrMxH8RfM2R6F/cjd2ycYOS7IqRWWkQVvEOfKTcFVBdSUdzh8f6j9Ov+hEUDQPU2v/ACZc3I+Caq4jzYv95XTNehpkxpetY2bNVSTptfRGT5n6GU0+ptNNPZroZJXrbYPm8o8lVFnYhCa3otd0JX4kFC5c7guif6m7oeW8zTq7Zvea8mfe0bxuJQhfDn0ZVTcGddtNPZ8zPhK8T4yx9Sc4LaNq5f39f/neRRz9kHXNxfYuxeVkE9wdCDyr5v5UYJL73z+5ECbelZs8HLjfFcpdEo9qM9PNQsUn0PJpuLSL0fJRUouMlumtmjUxtTwb61OOTXHtU5KLXrNDWdborolTiWKy2S25UeiPfv2m+nfXGO82U1CTeCr2pRtnGL3Sk0mcQDmy8AAAAAAAAAAAAb2FquZh0eJolFQ33547m1DiHPi05Kqa7HHYhwTR1FsVhSZi4RfYv2BkLKw68hR5PLW+3YZyP4c+Zsf0P+5kgdBVJygm/BSksNor2t63kY2bPGx4wShtvKS3be25ofH+o/Tr/oRh4g+eMj6y9yNA0l2ot4kkpPqW4wjhciVXEGop/Lrf/wADaxeJbk0smiE12w5mQAMI6q6L9x664vsX7Cy6MynxtE+UutdafecsrGoyqnXfXGce/q9BTdEzJYefCe/7uT5M13foXc2+mvWoh6lz7lacNx8im63pU8CfjINzok+aT6YvsZGHYGVRXk486LFvGa2ZQr6pU3zpn8qEnF/ca3W6dVSzHoyeqe8uZwABSJQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD7FuLTTaa5011Fm0XjzirSoxro1Wy2qPRXkJWL0bvnX3MrAM67Z1vMHgwnXCxYksnZuL4Zddrilfpmn2tdLjy47+1mxPw16vt+60bBi/5pyf5HVQLX/o6n7yt+g0/wBpftV8LfGObFwoycbAi/N6Vv65bs7d/wAKnEGXq2ka7hahm3ZWVVlQyOVdNyk4zjt0vq3h7TzIdj/4duJI8PeEnFryLFDF1KLw7W+hOTTg/wCpJehsk0mss/URdkm1/wBIdZo4fp5KuOH1/B69kYpGSRjkdSckjxb4XeHrOGvCBqmA4ONFlryMZ7bJ1TfKW3o54+mLKket/DhwBHjTQY3YShHWMJOWNJ8ytj11t9/Sn1P0s8nZmNkYWXbiZdFlF9UnCyuyPJlGS6U0zk9fpXRa/D6HY7P1SvqXldTCACiXgAbGnYWVqGbVhYVE8jIulya64LdyZ6k28I8bxzZaPBBos9Z43w24b0Yb+E3N9C5PyV98tvaejLCveDbhGrhLQVRPkzz8jaeVZHo36oruX4tlisOv2bpXp6cS6vmzltfqVfbmPRGradQ+H3MXL0zT0+dcu6S9SX/2O3rTzf4SNXjrXF+Zk1y5VFcvE0tPmcY8267m9395Hti5Q0+73kSbKqc797wVwAHJnTAAAA3+H/njH+s/czQN/h/54x/rP3Mkp+pH5RjL2suxH8RfM2R6F/ciQI/iL5myPQv7kdDf9KXwynD3IpQAOaLwAABZ+DZP4LfHqU0/YTxC8I1OGnTsf/Mse3oX/jJo6HSJqmOSlZ7mVzjNLlYr69pfgV0l+K8hXaiqovdVR5L9PS/wIg0+rkpXSaLVaxFAAFYzAB92e2+wB8AAAB9Sb6FuOTL6L9QB8B95Mvov1Dky+i/UMA+A+8mX0X6hyZfRfqGAfAfeTL6L9R8AAAALrw58zY/of9zJAj+HPmbH9D/uZIHS0fTj8Ioz9zKTxB88ZH1l7kaBv8QfPGR9Ze5Ggc9d9SXyy5D2oAAjMgdgYU3Zh0zfTKuLfqOvy/4UHDDog+mNcU/UbPZvukQX9EZimcSQUNYu2/i2l7EXMpfEVis1i9roi1H1In2jjhL5MKPcRwANKWgD6k30I+AAHOqqy6ahVCU5PoUVuzfhoepSjyvEJdzmtzONc5+1ZPHJLqRoM+ViZOLJLIplXv0N9D+8wGLTTwz1PIAB4ADNjYuRkPaimdn1VzI3Y6FqTW/iEu5zRJGqcvamzxyS6sjAbmRpmfjpysxpqK6Wudew0zGUZReJLATT6AAGJ6AAAAZ8bEycl/uKJ2d6XN6zcWhak1v4mK7uWiSNU5LMU2YuSXVkYDcyNMz6E5WY1iiulrnXsNMxlGUeUlg9TT6AG29OzVj/AAh48lVyeVynt0dpqBxceqCaYABiegA+7PsAPgPsYylJRinJvoSXSb9Ojalat1jOK/maRnGEp+1ZPG0upHgkLtG1KpbvGcl/K0zQlGUJOMouMl0prZoSrlD3LATT6HwAGB6AAAADPjYeVk/5FFk12pc3rPUm3hBvBgBJx0LUmt/ExXc5o18jTc7HTlbjTUV0tc69hI6bEsuLMVKL7moACIyAPqTfQtxyZfRfqAPgPvJl9F+ocmX0X6hgHwH3ky+i/UEm+gA+A+8mX0X6hyZfRfqGAfD7GUoyUotxknumns0xyZfRfqDTXStgD2N4E+N6+NOD6rL7YvVcJKnNhvzye3k2eiSW/pTXUXiR4f4C4r1Pg7iKnWNMnvKPk3UyfkXVvphL8+p7M9hcEcWaRxjodeq6Rfyk9ldTJ/vKZ9cZL8eh9R1Gz9ar4bkvcv5OU2joXRPfivS/4JiZRvCJ4OeHuMoO7Mqli6go7QzKElPuUl0SXp5+xovNhgmX51xsjuzWUUK7JVy3oPDPL3EXgQ4u0+yb02WJqtK+S67FXZt3xlzepsrn/wCNOOuXyf2cyt/rQ29e568sNew10tj0N5TaNpDbF6WGkzzZoPgV4my7Iy1W7F0yn+LefjbPuUeb2nbnBvBWh8J47jp1DsyZrazKt2dku7fqXcvaW6w1rC3p9BTQ8xXPyyvfrrr1iT5eEatvSa1hs29JWeNuJ9O4Y0uWXmTUrZJqiiL8q2Xd2LtfUW5TjCLlJ4SK8ISm1GKyyveF7ieOhaFLDx7Ns/Ni4VpPnhDolP8ABd/oOgCQ4h1fN13VrtSz7OXda+ZLohHqiuxIjzkNdq3qbd7suh1ej0q09e73fUAApFsAAAG/w/8APGP9Z+5mgb/D/wA8Y/1n7mSU/Uj8oxl7WXYj+IvmbI9C/uRIHC+qu+qVVsFOEulPrOjsjvQcV3KUXh5OvQXf4p07zSv2n1aTpy/9JWan/wA2zyizx0UckNM0nKzZp8h109c5L3dpbqsLEqe9eNTF9qgtzLZy1B+LUXLqUnsiWvZyTzNmLv8ABxx6oUUQprW0ILZIjtb1erDrlVVJTyGtkl0R73+RqatLXpRajXGNfX4h7v8AMrc1JSammpb8+/Se6nVuC3ILH/3Y8hWnzbEpOUnKTbbe7b6z4Aagsll4eo0+enRnkV48rOU+ee2/tJarH09vaqnGb/ljFlEMuHZOrKqshJqUZJpr0l+rWRglFwIZVN88l9jVVH5NUI+iKIfi9JabXsv+avcybIXjD5ur+1XuZstUkqZEFfuRVAAc8XSb4PjvqFsuyr8UWorPBsf+IyJdkEvb+hv8S6jPDojTTLa2zr+ijdaWcatNvSKticp4RvZOdh4z2vyK4Ps33fqNf470zzn/ALJfkUxtttttt9LZ8K0tpTzySM1Qu5dqtX0+22NVd7lOT2SUJc/sN8g+F9O8TV8Muj+8mvIT/hj2/eThstPKc4b0+5BNJPCMeTbXRRO21qMIrds6+fSTXE2o/CLvgtMv3Vb8pr+KX6EKarXXKye6uiLNMd1ZYABRJS68OfM2P6H/AHMkCP4c+Zsf0P8AuZIHS0fTj8Ioz9zKTxB88ZH1l7kaBP6vo+dkajddVXFwk003JLqNT4h1L/pQ/rRpLaLXZJqL6lqM44XMiwSq0DUm/wDLgv8A5o2sXhq1tPJvjFdkOd+tmMdLdJ+09dkV3I7RMOWbnQht+7i+VY+7s+8u5gwsWjDpVVEFGPW+tvvPuVk0YtTtvsUIrt6X6Db6ahaeHN/JWnPffI+Z2TDExbL7OiK5l2vqRSsWSu1KqV+0lO5OfK6Hu+c2Na1OeoWpJOFMfkx7e9kca3V6lWzWOiJ64bq5l3jjaUn5NOJv6ImzHHxo88aKl6II6/LfwpZKelJSk3yJuK36lzP8S5pdTG2e7u4IrK3FZySnJiovaKX3FFwMS3Ny1RV0vnb6ortL3L5L9BE6HRXp+lyyrlyZTXLm+tLqX/naSaqlWzin0Wc/weVy3UzYrhgaPiLeUYLrk/lTZsYOTHLoV8K5wg35PK6Wu0pWpZludkyusfN0Rj1RXYXDRLIWaVjuDWygovua5mY6bUKybhHlFCcN1ZfU2MmirJolTdFShJc6KHlUujJtob3cJOO/bsX9tJNtpJc7bKHqN0b8++6PyZzbXoItpKOIvuZ0Z5muWPRdCTjG/Oj088avz/IwcLaerrXmWx3hW9oJ9cu37i0tpLd9BjotIpLiT/0LbMckauXlYun46lY1CC5oxiud9yRD2cTLl/u8RuP809n7iI1fMlm507W3yE9oLsRpkd2um5Yr5IyjSscy56ZrGNnS8Wk6reqMuv0M+aro+NmRc4JVXdUkuZ+kp0JShNTg3GUXumupl60nK+GYFd725TW0l3rpLGmuWpThYuZhOPDeYlJyqLca+VN0XGcekxFx4i09ZmI7IR/fVLePeutFONfqaHTPHYmhPeQJnh3SlmSeRkJ+Ji9lH6b/ACIYv2n0LHwqaUtuTBb+nr9pLoaFbPMuiMbZbq5GDOz8PTa4wnsnt5NcFz7fgRcuJlyvJw2132foQWbbO/LttsbcpSe+5hMrdfY5ejkjyNMccy3Yev4d8lC1Sok+uXPH1mzkaXg5N8MiVS5SfKfJ6J+ntKQTnDWpyqujh3y3qm9oN/wvs9BJRrFY1C1ZMZ17vOJPax81ZP2T9xRS9az81ZP2b9xRTHaXvXwe0dGTPC9WJbZf8KhVJJLk8vbvLFTjae3+6oxm/wCWMWUQ2NNslVn0Tg2mrI9HZuYafVRrSi4mU62+eS9Rppj8mqEfRFETxRTO+jGppjvOduyX3MmTjJR3U5Jbx6G+o29tanBxK0ZYeTQ07BxdLxuXOUOXt5dsub1diOFmvadGXJVk5d8YPYr2uajPOymoyaog9oR7e8jzWT13D9FS5InVWeci+4Wdi5kW8e1Ta6V0NfccNR0/Gzq+TdBKW3kzXSik491mPdG6qTjOL3TRedOyo5mHXkR5uUuddj60WtPqI6lOE1zI5wcHlFM1LCuwch02rddMZLokjVLxrOFHOwpV7LxkfKrff+pSGmm01s0a3Vafgz5dGT1z3kfD7GMpSUYpuTeyS6z4WThTT0ofDrY7t81SfV2sjopd091GU5bqyZNH0KuqMbs2KnY+dV/wx9PaSedm42BSpXSUfowiud+hGe+2FNM7ZvaMIuTKJn5VmZlTvtfPJ8y7F1I2l1kNJBRgubK8U7Hlk5LiZcvycPePfPn9xJaZq2LnPkR3rt+hLr9HaUo5VznXZGyEnGUXumuplOvX2xlmXNErpi1yLfq2jUZkXZUo1X9PKS5pen8yo31WUXSqti4zi9mmXrTclZeDVkLbeUedLqfWRfFWCrcb4ZXH95X8rbrj+hZ1emjOHFgR1zae6yD0XKrw8+N9qk4pNeSufnLdgZ+LmxbosTa6YtbNFEMmNdZj3Rupk4zi90ynptXKn045Ek61LmdgnG2cKqpWTe0IJtvsSNbSs6vPxVbHZTXNOP0WbU4xnCUJreMls12o3ikpRzEqtYeGQWbr+FbjXUwrubnCUU+StudekhNHyq8PPhkWxlKMU91Hp50c9Z0+eBlOPO6pc9cu7s9JoGiuut4ic+qLcYx3eXcuWFreFlXRpj4yE5PaPLj0v7iTKpwvgTuyllzTVVT3X80v0JrXNSjgUbR2d815EezvZtKL5Op2WkE4LexEyahqeJgvk3Tbn08iK3ZWNezqs/KhbTGcYxhyXylz9LNCyc7LJWWScpSe7b6ziay/VyuW72J4VqPMEzwjxNrPCurR1PRcyWPcuacemFsfoyj1r/xEMCrGTi8p8zKUVJYkso9T8AeGjhziGuvF1iUNG1F8zVsv3Fj/AJZvo9EtvSzslThZBTrlGcJLdSi900eDyd4c4w4m4eaWj61l41ae/iuXyq/6Jbx9hudPtiUVi1Z/dGm1Gxoyeanj9mezbDXsPOWneHXi6iChmYumZv8ANKqUJf8Aa0vYbsvD3rDj8w4G/b42ZfW1dM1zb/BQeytSuy/J3vYamVZXTVK22ca4RW8pSeyS72eftU8NfFuVFxxadOwl9Kupzl/3Nr2FI17iTXtdnytW1XKylvuoSntBeiK5l6iOzbNUfYm/4J69kWy97S/k7p458K+kaZGzF0Pk6nmdHjE/3MH6f4vQubvOjtc1bUNb1GzUNTyZ33z630RXYl0JdyNEGl1Wtt1L9T5eDc6bR16delc/IABULQAAAAAAN/h/54x/rP3M0Df4f+eMf6z9zJKfqR+UYy9rLsR/ELa0fIabT2XvRIEfxF8zZHoX9yOhv+nL4ZTj7kUzlz+nL1hWWLonL1nEHN5ZeM1eXlVvevItj6Js38TXs6lpWSV8OtSXP6yKBnC6cPazFxT6ovem59GfT4yptNfKi+mIzsDFzYbX1py6prmkvvKloWTLF1KqW+0ZvkT9DLubrTWrUV+pFWcdyXIpGr6bbp920vLql8ie3T3PvNEvuoY0MzDsoml5S5n2PqZQ5RcZOMls09mjWazTqmXLoyxVPeXM+HOn/Nh9ZHA50/5sPrIqrqSHYRC8YfN1f2q9zJoheMPm6v7Ve5nQ6v6MilX7kVQAHOl0sPBzjH4VKUkvkrnfpNDiS3xur27PeMEor1fnuRoLEr26lVjoYKHq3gSnD2nfDcnxlkf3Fb3l/M+w0cLHsy8mFFS3lJ9PYu0vOFjV4mNCipeTFdPa+0l0Wn4st6XRGNs91YRmIjiTUfgmP4iqX76xdX8K7SQz8qvDxZ329Eehdr6kUbLvsycid9r3nJ7+juL2t1HDjux6shqhvPLMQANIWwAAC68OfM2P6H/cyQI/hz5mx/Q/7mSB0tH04/CKM/cyGz9ehiZdmO8aU3B7b8vbfm9Bg/aavzOX9f6ETxB88ZH1l7kaBqLNZdGbSfcsRqi0iy/tNDzOX9f6HCXE30cP12foV0GH62/z/RlwoeCYv4izrE1XGqpdqW79pF5F92RZ4y6yVku2T3MYIJ3Ts9zyZKKXQAAjMgW3hH5rl9q/cipFt4R+a5fav3Iu7P8Arf6IrvaTBA8X5Pi8arEg9uW+VJLsXR7fcTxTeJrnbq9i6q0oL/z0tmw109yp/vyIalmRGG1g5+VhSbx7Nk+mLW6Zqg0cZOLymWms9TfzdWzsut12WqMH0xgttzQXO9kDY02HjNQx4dtsfeZOUrJep5GFFci66djrFwaqEvkx5/T1+04aza6dLyLF08hpffzfibZGcTtrR7UuuUV7TobfRU8dkUo85IpoAObLwLLwba3VkUvojJSX3834FaJ3g6T+G3R6nXv7V+Za0TxdEjtXpZaCka5jrG1O6uK2i3yo+h85dyr8Yw2zKZ7fKr29T/U2O0IZqz4IaX6iDi9pJ952HCSlCMl0Nbo67Ldw1nwyMOOPOSV1S22fXHqZV2dYoycX3M745WTT1rQrZ3TyMPaSk95V9DT7iCvx76HtdTZX9aLR2AGk1s1ui1bs+E3mLwYRuaWGddH1Nppp7NF5v03Bv38Zi17vrS2fsI/J4cxZpui2yp9j8pFOez7Y+3mSK6L6nDI1jEv0adc7dsidWzjyX8rYrBualp2TgSXjopwfROPQzTINRZZOSU1zRnCKS5AzYX+sp+0j7zCZsL/WU/aR95DH3IyfQv5H8Q3ujSbpRe0pLkL7/wBNyQIPjGTWBVHtt/BnQ6mW7VJopwWZIqwAOcLoLLwbc3VfQ/4WpL7+Z+5FaJzg6W2fbHtq39qLWjli6JHavSy0lL4ioVGrWqK2jPy19/T7dy6FY4yilk48+twa9T/U2W0I5qz4IKX6iFx6pXX10x+VOSivvL9TXGqqFUFtGEVFLuRT+G61ZrFO/RHeXqRcyLZsMRcjK980iJ4rt8XpTgnz2TUfu6fwKgXfV9PWoVQrla61GXK3S33I39ma/O5f0fqY6vTW22ZiuR7XOMY4ZWgWX9ma/O5f0fqP2Zr87n/R+pV/Q3+CTiwNjhGTlpcov+G1pepMlrIRsrlXNbxkmmu5mHTsOrBxlRU21vu2+ls2Dc0wca1GRVk8yyjr7IrdN9lUumEnF/czGb/EMORrGQu1p+tJmgc9ZHdm4+C7F5WTb0vNswcpWw54vmnH6SLtj3V5FELqpcqElumdfEtw9qbwr/E2y/cTfP8AyvtLmi1PDe5LoyK2veWUWfUMSrNxZUWrp54vri+0quHo+RbqMsWxOEa3vZPq26tvSXJNNbp7pnyb5MXJRcmlvsulmyu00LZKT7EEbHFYRp5uTj6VgLaKSiuTXBdbKZlX25N8rrpcqcn6u4y6pmXZuXKy3eO3NGH0V2GqanVajivC6Is1w3Vl9QACoSAAAAAAAAAAAAAAAAAAAAAAAAA3+H/njH+s/czQN/h/54x/rP3Mkp+pH5RjL2suxH8RfM2R6F/ciQI/iL5myPQv7kdDf9KXwynD3IpQAOaLwAAByre04tdTR2GUDCqd2ZTVHplNL2l/NtsxcpP4K9/YFE1dKOqZKXR42XvL02km29kukoOZb4/Luu+nNyX3s92k1uxR5R1ZhOdP+bD6yOBzp/zYfWRqV1LJ2EQvGHzdX9qvcyaIXjD5ur+1XuZ0Or+jIpV+5FUABzpdABOcL6d4634ZdH93B+Qn/FLt+4kqqds1FGMpKKyyU4d074HjeNtj+/sXP/KuwlW0k23skCA4p1HxcPgNMvKkv3jXUuz7zfScNNV8FRJzkRmv6i87K5MH+4r5od/eRgBoLJuyTlIuJJLCALZwpRFaY7JRTc5trddXR+BWs9752Q//AHZe8lsoddcZt9TGM8towAArmZdeHPmbH9D/ALmSBH8OfM2P6H/cyQOlo+nH4RRn7mUniD54yPrL3I0Df4g+eMj6y9yNA5676kvllyHtQABGZAAAAAAAtvCPzXL7V+5FSLbwj81y+1fuRd2f9b/RFd7SYKBnTdmbfN/xWSftL++g67m95t9rLO03yivkwo7nwAGpLANnSpcjUsaT6FbH3msfYScZKUXs090ZRe60zxrKOxCL4oW+j2d0o+838W6ORjV3R6JxTNfXa3ZpGRFLdqHK9XP+B0V3qqljwUo8pIo4AObLwJzg5f8AHXP/ANr8UQZY+DK3/wATb1eTFe39Czo1m6JHb7WWIrHGUt8qiPZBv1v9CzlM4jvV+rW8l7xr2gvu6fbubPaEsVY8kFK9RGnOErKpxsg5QknumuZozaX85432sfeWriTG+EaXNxW8q3y193T7NzWU6d2QlNPoTynutIiMPiPIrSjk1RuS/iXkv8iUx9f0+3ZTlOp/zR/Ip4Mq9ddDlnPyHVFl/oyce/8Ayb67PqyTMx12m0909mSWn61mYskpzd1fXGb3f3MuV7RT5TWCKVD7FvvqrvplVbFShJbNMouo4zxM2zHb35L5n2rqLxi315OPC+p7wmt0Vni+KWpQa66lv62ZbQhGVamjyltSwQpmwv8AWU/aR95hM2F/rKftI+81Efciy+hfyC4xX/B0P/3PwJ0i+J6XbpM2lu65Kf4P3nQaqO9TJFOt4kinAA50ugnODo7510uyrb2ogyy8G1bV5F762or7ud+9FrRrN0SO1+llgKzxk/8AiMePZBv2lmKdxPcrtWnFPdVpQ/F+82WvlinHkgpXqPvCr21ePfCXuLgUbRrlRqmPY3suXs/Q+b8S8mOzpZra/c9vXqIjibKycTHpnj2Otym02kn1d5A/HOp+dS/pj+RYOKaXbpMpJbuuSn+H4lPKuunZC3k3gkqScehIfHOp+dS/pj+Q+OdT86l/TH8iPBU41n3P8km5HwSHxzqfnUv6Y/kPjnU/Opf0x/IjzawcDJzVY8eCl4tbvd7b9x7Gy6Twmw4xXVGHJvtyLnddPlzfS9jGcra51WOuyEoTj0prZo4kTy3zMkDJj02X3Rpqi5Tk9kjhGMpSUYpuTeyS6y4aDpkcCjxtqTvmvKf0V2E+m07uljsYTnuo3NOx3iYVVE7HY4LZyfu9BsFT4g1aWTcqcabVNct+Un8qS6/QTehais/G2m0roc01295t6tTXKfCj2K0oSS3mRnFGm7N51EeZ/wCal7yvHYkoxlFxkk4tbNPrKZrmnywMryU3TPng+zuKWu026+JHp3Jap59LI4AGtJwAAAAAAAAAAAAAAAAAAAAAAZcOuN2XTVLfkzsjF7dOzZ6ll4BiN/h9b6xj/WfuZPLhzA+nf/UvyNvA0vDwp8umtue23Kk92bCrQWqab7EErotcjdNDiBOWj5CX0U/ajfONkI2QlCcVKMls0+tG2sjvRcfJXTw8nXgLdPh7T5SbTuj3KX5o4/s5gfTv/qX5Gm/8+79i1xolTPqTbSS3b6i3Q4f06L51bL0z/I3cXBxMZ70Y8IPt23frMo7Osb9TSPHeuxE8NaVOmfwzJjyZ7bVwfSu9k+YMnLxsZb33wh3N8/qIPUuIt4uvBi1v/wAyS9yL6nTpYbuf+kOJWPJs8TajGjHeJVLe2xbS2/hj+pVDlOUpzc5ycpN7tt87OJp9Re7p7zLMIKKwDnT/AJsPrI29J02eoysULYw5CTe6333JjD4cjVfCy/I5ai0+TGO2/wB57VprLMOK5CVkY8mT5C8YfN1f2q9zJo1tTw687FdFknHn3Ul1M3l8HOtxRUg8STKGCwS4Zt38nLg13waIK6DqunW3u4Scd/QaCyiyr3rBcjNS6GxpWFPOy40x3UemcuxF3prhTVGquKjCK2SNHh3Frx9NrnHnnbFTk/wJE3OjoVUMvqytbPeZp6vnQwMR2vZ2PmhHtZSLZzsslZZJylJ7tvrZb9T0eOfkeNtybEktoxSWyNX9msfzm31Ir6um+6XJckZVyhFFYM2Jj25WRGimO8pP1LtZZK+G8RPed10l2cyJTDw8bEhycepQ36X1v7yGvZ82/XyRnK5djliUxx8auiHyYRS9PeUTKe+Va+2b952AdeWve2b7ZMl2kkoxSMaOrOIJ7Q9Ixc3B8fdK1S5bXktJe4ka+H9PjJNq2fdKf5FaGitnFSXckdsU8Gbh1NaNj79j97JA41wjXCMIRUYxWyS6kcjd1x3YqPgqN5eSk8QrbWcjftXuRoF4z9Lw82fLuranttyovZmo+HMD6d/9S/I1Nugsc213LEbopYKkDb1jGrxNQsx6nJwjttynz86TNQoSi4ycX2Jk8rIABiegA5Vx5dkYJ7cppAHEtvCPzXL7V+5GjHhm3fysqCXdFsnNMw4YOIqIScudtyfWzaaLTWV2b0lhFe2cXHCNl9DOvJdLOxCAzOHI2XSsoyOQpPfkyjvt95PrqJ2pOC6GNU1HOSsglNU0azAxlfO6E1ylHZJkWaeyuVbxJcyypJ80AAYHpZOE85ODwbJc63lXv19q/EsE4qUXGS3TWzOva5yrnGcJOMovdNdTLbo2s1ZkY1XtV5HRs+ZS9H5G30WqTjw5f6K1tbzvIq+fjSxMyyiafkvmfaupmAu2r6ZTqEE2+RbFeTNL2MgJ8PagpbR8VJdqkVb9HZCXpWUSQtTXMiC7aDivE02uEltOXlyXY3+mxpaToMce2N+VONk488YR+Sn295J6hnY+DVy7p8/8MV0y9Ba0endKdlnIjsnvemJj1nNjg4UrN14yXk1rtZSG2223u3ztmzqebbnZLts5kuaMV0RRqlLV6jjT5dES1w3UbOlfOeN9rH3l8aTWzW6KHpXznjfax95erbIVVysskowit231F3ZvskRX9UU3XdOlg5TcYvxE3vB9ncRxeMfKwdUolBbTT+VXNc6InN4bfKcsS5JfQs6vvILtG366uaZnC3HKRXQS37P6jvttV6eWb+ncOqE1ZmWRntz8iPR97IIaS6TxgzdkV3N/hyuVekUqa2ct5JdzfMV/ie5XatNRe6riofi/eWDWdTqwKHCDTva2hBdXe+4pkpOUnKTbbe7b6y1rbIxhGlPoR1JtuTPhmwv9ZT9pH3mEzYX+sp+0j7zXR9yJn0L+cbYRsrlXNbxkmmu5nIjddzJ4Kxr47uPjNpx7VsdLZNQi5S6FFLLwiq6liWYWXKiaey54y+ku01i8204Wq4kZSSsg+eMlzOJFT4ZhyvIy5KPY4bv3mnt0M85r5osxuWPUV2uErJxhCLlKT2SXWy86VirDwa6P4kt5Ptb6TDpmk4uC+XHey36cur0dht5N9ONS7bpqEF1suaTTcBOc+pHZZv8AJHDUcqGHhzvn1LyV2vqRRLJysslOb3lJtt9rN7WtSnqF+6TjTD5EfxfeR5Q1mo408LoiWqG6uYLtoeas3BjJv97DybF39v3lJNnTc27ByVdU9+qUX0SRjpdRwZ5fRntkN5F6thGyuVc1vGSaa7ijaphWYOVKqabj0wl9JFw07UMbOr5VM/K28qD6UZcvGoyqnVfWpx7+r0G01FEdTBOLK8JuD5lABZ7+GqZS3pyZwXZKPK/I+VcM1KW9uVOS7Ix2/M1n6G7OMFjixK9iY9uVfGmmDlOXs72XGivH0fS3ynzQXKnLrlL/AM5jnVVg6XjOSUKoL5Um+d/mVjXNUnn2qME40Qfkx633ssqMdHHLeZMjy7XjsaWVdPIyJ32PeU3uzEbuk4E9QunVCyMHGPK3a7yw6ZoWPi2K26Xj7FzrdbRX3FSrTWXPe7eSSVkY8jFw5pXiIrLyI/vWvIi/4V2+kxcT6m48rBoez2/eyXuLCQeqaD8Kyp5FWRyHPncZR35zZ20yhTuUogjJOWZFWM+DlWYeVC+p88eldTXYc9Tw5YOV4ic1N8lPdI29L0azOxlfG+EFymtmt2amFVm/uxXNFlyjjL6Fqw8ivKxoX1PyZr1dxx1DFrzcWVFq5n0P6L7THpGD8AxPEeNdjcnJvbY3DoIpyhia+Sk+T5HX+Xj24uROi2O0ov195iLxqmnY+fWlYnGcfkzXSv0K/qWhzwsWzI+ERnGG3Nydm93saa/RTrbceaLULU+vUhwAUiUAAAAAAAAAAAAAAAAAAHKucq7I2QbjKLTTXU0cQAb3xtqPndnsHxtqPndnsNEEnGs+5/kx3Y+De+NtR87s9g+NtR87s9hogcaz7n+Rux8G98baj53Z7B8baj53Z7DRA41n3P8AI3Y+Dderai//AFdhiszcyxbTyrpLsc2a4PHZN9Wz3dXgPne7ABgegAAGfFy8jFcnj2yr5XTt1mf421Hzuz2GiDNWTisJs8cUze+NtR87s9g+NtR87s9hog941n3P8nm7Hwb3xtqPndnsNKcpTm5ye8pPdvtZ8BjKcpdXk9SS6G5XqefXXGuGTOMYrZLm5kcvjbUfO7PYaIMuLYv8mebq8G98baj53Z7B8baj53Z7DRA41n3P8jdj4N7421Hzuz2D421Hzuz2GiBxrPuf5G7Hwb3xtqPndnsNEAxlOUvc8nqSXQ2cbPzMavxdF8oQ332Rl+NtR87s9hog9Vs0sJsbq8G98baj53Z7B8baj53Z7DRB7xrPuf5PN2Pg3vjbUfO7PYPjbUfO7PYaIHGs+5/kbsfBkyLrb7XbdNzm+lsxgGDeebMgADwA+xbjJST2ae6PgAN7421Hzuz2D421Hzuz2GiCTjWfc/yY7sfBvfG2o+d2ewfG2o+d2ew0QONZ9z/I3Y+DZyc/Lya/F33ynDffZ9prAGEpOTy2epY6AAHh6AAASOHrOfjJRVqsiuqxb+3pN5cTXbc+LW33SZAAnjqbYrCkYOuL7Exk8Q51i2rVdK7Yrd+0irbLLZuds5Tk+lye7OAMJ2zs9zyeqKXQAAjMjnRZKm6FsNuVCSkt+1G3napmZtSqumuQnvtFbb+k0QZKcknFPkzzCbycoTnXNThJxkuhp7NEpja/n1JKbhcl9Nc/rREgyhbOv2vAcU+pP/tNdt/pa9/rM1srX8+5OMHClP6C5/WyJBJLVXSWHIxVcV2Ps5SnJynJyk+dtvds+AFczBmwv9ZT9pH3mEzYX+sp+0j7zKPuR4+hfyD4x/0VP2n4MnCD4x/0VP2n4M3+r+jIp1+5Fews3Jw58rHtcd+ldKf3ErXxLkKO08eqT7U2iCBpIX2VrEWW3CL6om7uJMuUdqqaq+/nbIrKyb8qzl32ysfVu+ZehGEHll1lnuYUEuiAAIjIAAA5QnOuanCUoyXQ09miTxte1ClJSlC5L6a5/WiKBnC2cPa8Hjin1J9cTXbc+LXv9ZmK7iPMmtq66q+/bdkKCZ6u5/5GPDj4M2Tk35M+XfbKx9W76DCAV223lmZmxcm/Fm50WSrk1s2uw2PjbUfO7PYaIMlZOKwmeOKZvfG2o+d2ewfG2o+d2ew0Qe8az7n+Tzdj4MuTfdkWeMvsc57bbsyY2fmY9fi6L5QhvvsjWBipyTynzPcLob3xtqPndnsHxtqPndnsNEGXGs+5/k83Y+De+NtR87s9hjv1HNvqdV2ROcJdKfWaoDtm+Tkz3dXgAAjPQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAZ9PjKedRGKbbsj0ek3eH78CidzzlBppcnlV8r8Cbq1XRanvVOuD7Y0tfgW6KISSlKaRHKbXJIliF4vrnPT65xi2oWby26lszY+PNM85f+3L8g9c0trZ5G6+zl+RtbbKrIOO+uf7leKlF5wUwFseoaA3u1S/8A/B/kVnMlXPLulTt4tzbjstubfm5jTXUxrWVJP4LMZOXYwgAgMwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/9k="
+        alt="BizProspex" style="height:36px;width:auto;object-fit:contain;filter:brightness(1.1);border-radius:4px;" />
+      <div style="width:1px;height:26px;background:rgba(255,255,255,0.12);margin:0 2px;"></div>
+      <div class="brand-info">
+        <span class="brand-name" style="font-size:13px;">Operations Team Register</span>
+        <span class="brand-sub">BizProspex · Employee Record System · 2025</span>
+      </div>
+    </div>
+    <div class="header-center">
+      <button class="header-pill active" onclick="filterEmp('all',this)">All Staff</button>
+      <button class="header-pill" onclick="filterEmp('warned',this)">⚠ Warned</button>
+      <button class="header-pill" onclick="filterEmp('top',this)">⭐ Top Performers</button>
+    </div>
+    <div class="header-right">
+      <div class="live-badge">
+        <div class="live-dot"></div>LIVE
+      </div>
+      <div class="header-clock" id="clock"></div>
+      <button class="add-emp-btn" onclick="openAddEntry()"
+        style="background:var(--surface2);border:1px solid var(--border2);color:var(--ivory2);">＋ New Entry</button>
+      <button class="add-emp-btn" onclick="openAddMember()" id="addMemberBtn">👤 Add Member</button>
+    </div>
+  </header>
+
+  <!-- ══ LAYOUT ══ -->
+  <div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-top">
+        <div class="register-title">— Team Register —</div>
+        <div class="search-box">
+          <input type="text" id="searchInput" placeholder="Search member…" oninput="renderList(this.value)">
+        </div>
+        <div class="sidebar-stats">
+          <div class="sstat">
+            <span class="sstat-val text-gold" id="ss-total">1</span>
+            <span class="sstat-lbl">Members</span>
+          </div>
+          <div class="sstat">
+            <span class="sstat-val text-warn" id="ss-warn">0</span>
+            <span class="sstat-lbl">Warnings</span>
+          </div>
+          <div class="sstat">
+            <span class="sstat-val text-green" id="ss-pos">0</span>
+            <span class="sstat-lbl">Positives</span>
+          </div>
+          <div class="sstat">
+            <span class="sstat-val text-red" id="ss-inc">0</span>
+            <span class="sstat-lbl">Incidents</span>
+          </div>
+        </div>
+      </div>
+      <div class="sidebar-section-label">Employees</div>
+      <div class="emp-list" id="empList"></div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main" id="mainContent">
+
+      <!-- WELCOME -->
+      <div class="welcome" id="welcomeState">
+        <div class="welcome-emblem">📋</div>
+        <h2>Employee Register</h2>
+        <p>A complete 365-day record for every team member. Select any employee to view their full ledger — incidents,
+          warnings, achievements, analytics, and evaluation summaries.</p>
+        <p class="mono text-ivory3" style="font-size:11px;margin-top:12px;letter-spacing:0.1em">← SELECT A TEAM MEMBER
+          TO BEGIN</p>
+      </div>
+
+      <!-- EMP VIEW -->
+      <div class="emp-view" id="empView">
+
+        <!-- HERO -->
+        <div class="emp-hero" id="empHero">
+          <div class="emp-hero-grill" id="heroGrill"></div>
+          <div class="emp-hero-top">
+            <div class="emp-hero-avatar" id="heroAvatar"></div>
+            <div class="emp-hero-info">
+              <div class="emp-hero-name" id="heroName">—</div>
+              <div class="emp-hero-meta" id="heroMeta">
+                <span class="emp-hero-tag">IMPACT OPS</span>
+                <span class="emp-hero-tag" id="heroJoinTag">REG: 2025</span>
+                <span class="emp-hero-tag" id="heroIdTag">—</span>
+              </div>
+            </div>
+            <div class="emp-hero-actions">
+              <button class="hero-action-btn" onclick="openAddEntry()">＋ Add Entry</button>
+              <button class="hero-action-btn danger" onclick="addWarning()">⚠ Issue Warning</button>
+              <button class="hero-action-btn primary" onclick="openAddEntry('achievement')">★ Achievement</button>
+            </div>
+          </div>
+          <div class="kpi-row" id="kpiRow">
+            <div class="kpi-card gold"><span class="kpi-val" id="kpiNet">0</span><span class="kpi-lbl">Net Score</span>
+            </div>
+            <div class="kpi-card warn"><span class="kpi-val" id="kpiWarn">0</span><span class="kpi-lbl">Warnings</span>
+            </div>
+            <div class="kpi-card red"><span class="kpi-val" id="kpiInc">0</span><span class="kpi-lbl">Incidents</span>
+            </div>
+            <div class="kpi-card green"><span class="kpi-val" id="kpiPos">0</span><span class="kpi-lbl">Positives</span>
+            </div>
+            <div class="kpi-card blue"><span class="kpi-val" id="kpiMail">0</span><span class="kpi-lbl">Mail Refs</span>
+            </div>
+            <div class="kpi-card purple"><span class="kpi-val" id="kpiAch">0</span><span
+                class="kpi-lbl">Achievements</span></div>
+          </div>
+        </div>
+
+        <!-- TABS -->
+        <div class="tabs-bar" id="tabsBar">
+          <button class="tab-btn active" onclick="switchTab('register',this)"><span class="ticon">📋</span> Register
+            <span class="tab-count" id="tc-register">0</span></button>
+          <button class="tab-btn" onclick="switchTab('incidents',this)"><span class="ticon">⚠️</span> Incidents &amp;
+            Warnings <span class="tab-count" id="tc-incidents">0</span></button>
+          <button class="tab-btn" onclick="switchTab('positives',this)"><span class="ticon">⭐</span> Positives <span
+              class="tab-count" id="tc-positives">0</span></button>
+          <button class="tab-btn" onclick="switchTab('mail',this)"><span class="ticon">📧</span> Mail Register <span
+              class="tab-count" id="tc-mail">0</span></button>
+          <button class="tab-btn" onclick="switchTab('analytics',this)"><span class="ticon">📊</span> Analytics</button>
+          <button class="tab-btn" onclick="switchTab('evaluation',this)"><span class="ticon">🏆</span>
+            Evaluation</button>
+          <button class="tab-btn" onclick="switchTab('timeline',this)"><span class="ticon">📅</span> Timeline</button>
+        </div>
+
+        <!-- PANELS -->
+        <div class="tab-panels">
+
+          <!-- REGISTER (all entries) -->
+          <div class="tab-panel active" id="panel-register">
+            <div class="section-head">
+              <div class="section-title"><span class="sticon">📋</span> Full Register — All Entries</div>
+              <div class="section-sub" id="reg-daterange">2025 · 365-Day Record</div>
+            </div>
+            <div class="records-list" id="list-register">
+              <div class="empty-state">
+                <div class="empty-icon">📋</div>
+                <div class="empty-title">No entries yet</div>
+                <div class="empty-sub">Add an incident, warning, positive note, or mail reference to begin this
+                  employee's register.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- INCIDENTS & WARNINGS -->
+          <div class="tab-panel" id="panel-incidents">
+            <div class="section-head">
+              <div class="section-title"><span class="sticon">⚠️</span> Incidents &amp; Warnings</div>
+              <button class="hero-action-btn danger" onclick="openAddEntry('incident')"
+                style="padding:7px 14px;font-size:12px">+ Log Incident</button>
+            </div>
+            <div class="records-list" id="list-incidents">
+              <div class="empty-state">
+                <div class="empty-icon">✅</div>
+                <div class="empty-title">No incidents on record</div>
+                <div class="empty-sub">All clear. Any warnings or incidents logged will appear here with full evidence
+                  references.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- POSITIVES -->
+          <div class="tab-panel" id="panel-positives">
+            <div class="section-head">
+              <div class="section-title"><span class="sticon">⭐</span> Positive Contributions</div>
+              <button class="hero-action-btn" onclick="openAddEntry('positive')"
+                style="padding:7px 14px;font-size:12px">+ Add Positive</button>
+            </div>
+            <div class="records-list" id="list-positives">
+              <div class="empty-state">
+                <div class="empty-icon">⭐</div>
+                <div class="empty-title">No positives logged</div>
+                <div class="empty-sub">Record exceptional contributions, commendations, and achievements here.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- MAIL REGISTER -->
+          <div class="tab-panel" id="panel-mail">
+            <div class="section-head">
+              <div class="section-title"><span class="sticon">📧</span> Mail &amp; Communication Register</div>
+              <button class="hero-action-btn" onclick="openAddEntry('mail')" style="padding:7px 14px;font-size:12px">+
+                Log Mail</button>
+            </div>
+            <p style="font-size:13px;color:var(--ivory3);margin-bottom:16px;line-height:1.7">Every official
+              communication — warnings, memos, HR correspondence — is catalogued here as a permanent evidence register.
+              Each entry includes the mail subject, date, reference ID, and action taken.</p>
+            <div class="records-list" id="list-mail">
+              <div class="empty-state">
+                <div class="empty-icon">📬</div>
+                <div class="empty-title">No mail entries</div>
+                <div class="empty-sub">Log all formal communications here — warning mails, HR notices, performance memos
+                  — for a complete audit trail.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ANALYTICS -->
+          <div class="tab-panel" id="panel-analytics">
+            <div class="section-head">
+              <div class="section-title"><span class="sticon">📊</span> Analytics Report</div>
+            </div>
+            <div class="analytics-grid">
+              <div class="analytics-card">
+                <div class="ac-title">Monthly Activity</div>
+                <div class="mini-chart" id="monthChart"></div>
+                <div class="mc-labels" id="monthLabels"></div>
+              </div>
+              <div class="analytics-card">
+                <div class="ac-title">Entry Breakdown</div>
+                <div class="donut-wrap">
+                  <svg class="donut-svg" width="100" height="100" id="donutSvg" viewBox="0 0 100 100"></svg>
+                  <div class="donut-legend" id="donutLegend"></div>
+                </div>
+              </div>
+              <div class="analytics-card full">
+                <div class="ac-title">Score Trend (Last 6 Months)</div>
+                <svg class="trend-svg" id="trendSvg" height="80" viewBox="0 0 600 80" preserveAspectRatio="none"></svg>
+              </div>
+              <div class="analytics-card">
+                <div class="ac-title">This Month Summary</div>
+                <div id="monthSummary" style="display:flex;flex-direction:column;gap:8px;margin-top:4px"></div>
+              </div>
+              <div class="analytics-card">
+                <div class="ac-title">Quick Ratios</div>
+                <div id="ratioPanel" style="display:flex;flex-direction:column;gap:10px;margin-top:4px"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- EVALUATION -->
+          <div class="tab-panel" id="panel-evaluation">
+            <div class="section-head">
+              <div class="section-title"><span class="sticon">🏆</span> Performance Evaluation Summary</div>
+            </div>
+            <div class="eval-summary" id="evalSummary"></div>
+            <div class="eval-bars" id="evalBars"
+              style="margin-top:16px;display:flex;flex-direction:column;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px">
+            </div>
+          </div>
+
+          <!-- TIMELINE -->
+          <div class="tab-panel" id="panel-timeline">
+            <div class="section-head">
+              <div class="section-title"><span class="sticon">📅</span> Full Activity Timeline</div>
+            </div>
+            <div class="timeline" id="timelineList">
+              <div class="empty-state" style="padding-left:0">
+                <div class="empty-icon">📅</div>
+                <div class="empty-title">Empty Timeline</div>
+                <div class="empty-sub">All entries across all categories will appear here in chronological order.</div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /tab-panels -->
+      </div><!-- /emp-view -->
+    </main>
+  </div>
+
+  <!-- ══ ADD ENTRY MODAL ══ -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <div class="modal-head">
+        <div class="modal-title" id="modalTitle">Add Register Entry</div>
+        <button class="modal-close" onclick="closeModal()">×</button>
+      </div>
+
+      <!-- TYPE SELECTOR -->
+      <div class="type-selector" id="typeSelector">
+        <div class="type-opt" data-type="incident" onclick="selectType('incident',this)"><span
+            class="to-icon">🚨</span>Incident</div>
+        <div class="type-opt" data-type="warning" onclick="selectType('warning',this)"><span
+            class="to-icon">⚠️</span>Warning</div>
+        <div class="type-opt" data-type="positive" onclick="selectType('positive',this)"><span
+            class="to-icon">⭐</span>Positive</div>
+        <div class="type-opt" data-type="mail" onclick="selectType('mail',this)"><span class="to-icon">📧</span>Mail Ref
+        </div>
+        <div class="type-opt" data-type="note" onclick="selectType('note',this)"><span class="to-icon">📝</span>Note
+        </div>
+        <div class="type-opt" data-type="achievement" onclick="selectType('achievement',this)"><span
+            class="to-icon">🏆</span>Achievement</div>
+      </div>
+
+      <div class="form-grid three">
+        <div class="form-field">
+          <label class="field-label">Date</label>
+          <input type="date" class="field-input" id="fDate">
+        </div>
+        <div class="form-field">
+          <label class="field-label">Reference ID</label>
+          <input type="text" class="field-input" id="fRefId" placeholder="e.g. INC-2025-001">
+        </div>
+        <div class="form-field">
+          <label class="field-label">Severity / Level</label>
+          <select class="field-select" id="fSeverity">
+            <option value="low">Low</option>
+            <option value="medium" selected>Medium</option>
+            <option value="high">High</option>
+            <option value="critical">Critical</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-grid full mt8">
+        <div class="form-field">
+          <label class="field-label">Title / Subject</label>
+          <input type="text" class="field-input" id="fTitle" placeholder="Brief title of the entry…">
+        </div>
+      </div>
+
+      <div class="form-grid full mt8">
+        <div class="form-field">
+          <label class="field-label">Details / Description</label>
+          <textarea class="field-textarea" id="fDesc"
+            placeholder="Full description — what happened, when, context, outcome…"></textarea>
+        </div>
+      </div>
+
+      <div class="form-grid mt8">
+        <div class="form-field">
+          <label class="field-label">Mail Subject (if applicable)</label>
+          <input type="text" class="field-input" id="fMailSubject" placeholder="Warning mail subject…">
+        </div>
+        <div class="form-field">
+          <label class="field-label">Action Taken</label>
+          <input type="text" class="field-input" id="fAction" placeholder="e.g. Verbal warning, Written notice…">
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="form-actions">
+        <button class="form-btn" onclick="closeModal()">Cancel</button>
+        <button class="form-btn primary" onclick="saveEntry()">Save to Register</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ ADD MEMBER MODAL ══ -->
+  <div class="am-overlay" id="amOverlay">
+    <div class="am-modal">
+
+      <div class="am-head">
+        <div class="am-head-left">
+          <div class="am-head-title">👤 Add New Team Member</div>
+          <div class="am-head-sub">Operations Team Register · BizProspex · 2025</div>
+        </div>
+        <button class="am-close" onclick="closeAddMember()">×</button>
+      </div>
+
+      <div class="am-body">
+
+        <!-- Live Preview -->
+        <div class="am-preview" id="amPreview">
+          <div class="am-prev-av" id="amPrevAv">?</div>
+          <div class="am-prev-info">
+            <div class="am-prev-name placeholder" id="amPrevName">Enter name below…</div>
+            <div class="am-prev-tags" id="amPrevTags">
+              <span class="am-prev-tag" style="border-color:rgba(201,168,76,0.3);color:var(--ivory3);">No Team</span>
+              <span class="am-prev-tag" style="border-color:var(--border2);color:var(--ivory3);">—</span>
+            </div>
+          </div>
+          <div class="am-prev-id" id="amPrevId">ID: —</div>
+        </div>
+
+        <!-- Full Name -->
+        <div>
+          <div class="am-label">Full Name *</div>
+          <input type="text" class="am-name-input" id="amName" placeholder="e.g. Rahul Sharma"
+            oninput="amOnName(this.value)" autocomplete="off" />
+          <div class="am-error" id="amNameErr"></div>
+        </div>
+
+        <!-- Team Selection -->
+        <div>
+          <div class="am-label">Team *</div>
+          <div class="am-team-grid">
+            <div class="am-team-opt" id="amTeamImpact" onclick="amSelectTeam('Impact Ops')">
+              <div class="am-team-dot impact"></div>
+              <div class="am-team-name">Impact Ops</div>
+              <div class="am-team-count" id="amImpactCount">0</div>
+            </div>
+            <div class="am-team-opt" id="amTeamPinnacle" onclick="amSelectTeam('Pinnacle Team')">
+              <div class="am-team-dot pinnacle"></div>
+              <div class="am-team-name">Pinnacle Team</div>
+              <div class="am-team-count" id="amPinnacleCount">0</div>
+            </div>
+          </div>
+          <div class="am-error" id="amTeamErr"></div>
+        </div>
+
+        <!-- Designation -->
+        <div>
+          <div class="am-label">Designation *</div>
+          <div class="am-desig-grid" id="amDesigGrid">
+            <button class="am-desig-btn" data-desig="TL" onclick="amSelectDesig('TL',this)">TL</button>
+            <button class="am-desig-btn" data-desig="L1" onclick="amSelectDesig('L1',this)">L1</button>
+            <button class="am-desig-btn" data-desig="L2" onclick="amSelectDesig('L2',this)">L2</button>
+            <button class="am-desig-btn" data-desig="L3" onclick="amSelectDesig('L3',this)">L3</button>
+            <button class="am-desig-btn" data-desig="L4" onclick="amSelectDesig('L4',this)">L4</button>
+          </div>
+          <div class="am-error" id="amDesigErr"></div>
+        </div>
+
+        <!-- Join Date + Auto ID -->
+        <div class="am-row2">
+          <div>
+            <div class="am-label">Join Date</div>
+            <input type="date" class="am-date-input" id="amJoinDate" />
+          </div>
+          <div>
+            <div class="am-label">Auto Employee ID</div>
+            <div class="am-id-display">
+              <span>ID</span>
+              <span id="amAutoId" style="color:var(--gold);font-size:12px;letter-spacing:0.08em;">—</span>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /am-body -->
+
+      <div class="am-footer">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ivory3);letter-spacing:0.1em;">
+          Member will appear in the sidebar immediately
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="am-cancel" onclick="closeAddMember()">Cancel</button>
+          <button class="am-save" id="amSaveBtn" onclick="saveNewMember()">
+            <span>＋</span> Add Member
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"><span id="toastIcon"></span><span id="toastMsg" style="margin-left:4px"></span></div>
+
+  <script>
+    /* ════════════════════════════════════
+       SUPABASE CONFIG
+       ▸ Replace these with your Supabase project credentials
+       ▸ Get them from: Supabase Dashboard → Settings → API
+    ════════════════════════════════════ */
+    const SUPABASE_URL = 'https://kzmayutoemymysgnnwda.supabase.co';   // e.g. https://xxxxx.supabase.co
+    const SUPABASE_KEY = 'sb_publishable_8bXbXckmkSsW3Zl-nfVb4Q_x1DhZ4U3'; // your anon/public key
+    const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    /* ════════════════════════════════════
+       ADD MEMBER MODAL
+    ════════════════════════════════════ */
+    let amTeamSel = '';
+    let amDesigSel = '';
+
+    // Color palette for new members (cycles through AVATAR_COLORS)
+    function getAvatarColorsForIndex(idx) {
+      return AVATAR_COLORS[idx % AVATAR_COLORS.length];
+    }
+
+    function openAddMember() {
+      // Reset form
+      amTeamSel = '';
+      amDesigSel = '';
+      document.getElementById('amName').value = '';
+      document.getElementById('amName').classList.remove('am-err');
+      document.getElementById('amNameErr').textContent = '';
+      document.getElementById('amTeamErr').textContent = '';
+      document.getElementById('amDesigErr').textContent = '';
+      document.getElementById('amTeamImpact').className = 'am-team-opt';
+      document.getElementById('amTeamPinnacle').className = 'am-team-opt';
+      document.querySelectorAll('.am-desig-btn').forEach(b => b.classList.remove('am-sel'));
+
+      // Set today as default join date
+      document.getElementById('amJoinDate').value = new Date().toISOString().slice(0, 10);
+
+      // Update counts
+      const impactCount = employees.filter(e => (e.team || getEmpTeam(e.name)) === 'Impact Ops').length;
+      const pinnacleCount = employees.filter(e => (e.team || getEmpTeam(e.name)) === 'Pinnacle Team').length;
+      document.getElementById('amImpactCount').textContent = impactCount + ' members';
+      document.getElementById('amPinnacleCount').textContent = pinnacleCount + ' members';
+
+      // Reset preview
+      amUpdatePreview('', '', '');
+
+      document.getElementById('amOverlay').classList.add('open');
+      setTimeout(() => document.getElementById('amName').focus(), 250);
+    }
+
+    function closeAddMember() {
+      document.getElementById('amOverlay').classList.remove('open');
+    }
+
+    function amOnName(val) {
+      document.getElementById('amNameErr').textContent = '';
+      document.getElementById('amName').classList.remove('am-err');
+      amUpdatePreview(val.trim(), amTeamSel, amDesigSel);
+    }
+
+    function amSelectTeam(team) {
+      amTeamSel = team;
+      document.getElementById('amTeamErr').textContent = '';
+      document.getElementById('amTeamImpact').className = 'am-team-opt' + (team === 'Impact Ops' ? ' sel-impact' : '');
+      document.getElementById('amTeamPinnacle').className = 'am-team-opt' + (team === 'Pinnacle Team' ? ' sel-pinnacle' : '');
+
+      // Auto-generate ID
+      amUpdatePreview(document.getElementById('amName').value.trim(), team, amDesigSel);
+    }
+
+    function amSelectDesig(desig, btn) {
+      amDesigSel = desig;
+      document.getElementById('amDesigErr').textContent = '';
+      document.querySelectorAll('.am-desig-btn').forEach(b => b.classList.remove('am-sel'));
+      btn.classList.add('am-sel');
+      amUpdatePreview(document.getElementById('amName').value.trim(), amTeamSel, desig);
+    }
+
+    function amGenerateId(team) {
+      if (!team) return '—';
+      const prefix = team === 'Impact Ops' ? 'IO' : 'PT';
+      const teamEmps = employees.filter(e => (e.team || getEmpTeam(e.name)) === team);
+      const nextNum = String(teamEmps.length + 1).padStart(3, '0');
+      return `${prefix}-${nextNum}`;
+    }
+
+    function amUpdatePreview(name, team, desig) {
+      const preview = document.getElementById('amPreview');
+      const prevAv = document.getElementById('amPrevAv');
+      const prevNm = document.getElementById('amPrevName');
+      const prevTgs = document.getElementById('amPrevTags');
+      const prevId = document.getElementById('amPrevId');
+      const autoId = document.getElementById('amAutoId');
+
+      const initials = name ? name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase() : '?';
+      const teamColor = team === 'Impact Ops' ? 'var(--gold)' : team === 'Pinnacle Team' ? 'var(--teal)' : null;
+
+      // Avatar
+      if (name) {
+        const idx = employees.length; // next index
+        const [bg, fg] = AVATAR_COLORS[idx % AVATAR_COLORS.length];
+        prevAv.style.cssText = `background:${bg};color:${fg}`;
+        prevAv.textContent = initials;
+      } else {
+        prevAv.style.cssText = '';
+        prevAv.textContent = '?';
+      }
+
+      // Name
+      prevNm.textContent = name || 'Enter name below…';
+      prevNm.className = 'am-prev-name' + (name ? '' : ' placeholder');
+
+      // Team strip
+      preview.className = 'am-preview' + (team === 'Pinnacle Team' ? ' team-pinnacle' : '');
+
+      // Tags
+      const teamTag = teamColor
+        ? `<span class="am-prev-tag" style="border-color:color-mix(in srgb,${teamColor} 40%,transparent);color:${teamColor};background:color-mix(in srgb,${teamColor} 12%,transparent);">${team}</span>`
+        : `<span class="am-prev-tag" style="border-color:var(--border2);color:var(--ivory3);">No Team</span>`;
+      const desigTag = desig
+        ? `<span class="am-prev-tag" style="border-color:var(--border2);color:var(--ivory2);">${desig}</span>`
+        : `<span class="am-prev-tag" style="border-color:var(--border2);color:var(--ivory3);">—</span>`;
+      prevTgs.innerHTML = teamTag + desigTag;
+
+      // ID
+      const genId = amGenerateId(team);
+      prevId.textContent = 'ID: ' + genId;
+      autoId.textContent = genId;
+    }
+
+    async function saveNewMember() {
+      const name = document.getElementById('amName').value.trim();
+      const joinDate = document.getElementById('amJoinDate').value || new Date().toISOString().slice(0, 10);
+      let valid = true;
+
+      // Validate name
+      if (!name || name.length < 2) {
+        document.getElementById('amNameErr').textContent = '✗ Please enter the full name (min 2 characters)';
+        document.getElementById('amName').classList.add('am-err');
+        document.getElementById('amName').focus();
+        valid = false;
+      } else if (employees.find(e => e.name.toLowerCase() === name.toLowerCase())) {
+        document.getElementById('amNameErr').textContent = `✗ "${name}" already exists in the register`;
+        document.getElementById('amName').classList.add('am-err');
+        document.getElementById('amName').focus();
+        valid = false;
+      }
+
+      // Validate team
+      if (!amTeamSel) {
+        document.getElementById('amTeamErr').textContent = '✗ Please select a team';
+        valid = false;
+      }
+
+      // Validate desig
+      if (!amDesigSel) {
+        document.getElementById('amDesigErr').textContent = '✗ Please select a designation';
+        valid = false;
+      }
+
+      if (!valid) return;
+
+      // Generate ID
+      const newId = amGenerateId(amTeamSel);
+
+      // Add to employees list
+      const newEmp = { name, id: newId, desig: amDesigSel, joined: joinDate, team: amTeamSel };
+
+      // ── Save to Supabase ──
+      const { error } = await _supabase.from('employees').insert({
+        id: newId, name, desig: amDesigSel, joined: joinDate, team: amTeamSel
+      });
+      if (error) { showToast('DB Error: ' + error.message, 'error', '⚠'); return; }
+
+      employees.push(newEmp);
+      register[name] = [];
+
+      // Re-render sidebar
+      renderList(document.getElementById('searchInput').value);
+
+      // Update member counts
+      const impactCount = employees.filter(e => (e.team || getEmpTeam(e.name)) === 'Impact Ops').length;
+      const pinnacleCount = employees.filter(e => (e.team || getEmpTeam(e.name)) === 'Pinnacle Team').length;
+      document.getElementById('ss-total').textContent = employees.length;
+
+      closeAddMember();
+      selectEmployee(name); // Auto-open the new member's profile
+
+      const teamColor = amTeamSel === 'Impact Ops' ? '🟡' : '🟢';
+      showToast(`${teamColor} ${name} (${amDesigSel}) added to ${amTeamSel} · ID: ${newId}`, 'success', '👤');
+    }
+
+    /* ════════════════════════════════════
+       REMOVE MEMBER
+    ════════════════════════════════════ */
+    async function removeMember(empName, e) {
+      e.stopPropagation();
+      if (!confirm(`Remove ${empName} from the register?\n\nThis will permanently delete all their entries. This cannot be undone.`)) return;
+
+      // ── Delete from Supabase (entries cascade-delete via FK) ──
+      const { error } = await _supabase.from('employees').delete().eq('name', empName);
+      if (error) { showToast('DB Error: ' + error.message, 'error', '⚠'); return; }
+
+      employees = employees.filter(ep => ep.name !== empName);
+      delete register[empName];
+      if (currentEmp === empName) {
+        currentEmp = null;
+        document.getElementById('welcomeState').style.display = '';
+        document.getElementById('empView').classList.remove('active');
+      }
+      renderList(document.getElementById('searchInput').value);
+      showToast(`${empName} removed from register`, 'info', '🗑');
+    }
+
+    /* ════════════════════════════════════
+       DATA
+    ════════════════════════════════════ */
+
+    const AVATAR_COLORS = [
+      ['#1e3a5f', '#90c8f0'], ['#3d1f00', '#f0c060'], ['#1a3d2b', '#6dd8a0'],
+      ['#3d0f1f', '#f08080'], ['#1f1a3d', '#b08de0'], ['#003d3d', '#60d8d8'],
+      ['#3d2d00', '#f0c080'], ['#002a3d', '#80b8f0'], ['#3d1f3d', '#d080e0'],
+      ['#003d1a', '#60d890'], ['#3d0000', '#f06060'], ['#1a3d3d', '#40c8c8'],
+      ['#2d2d00', '#e0c040'], ['#00213d', '#60a0f0'], ['#3d1a00', '#f08040'],
+      ['#003d2d', '#40c880'], ['#2d003d', '#a060e0'], ['#3d3d00', '#d0b030'],
+      ['#001a3d', '#6090e0'], ['#3d0029', '#e060a0'], ['#003d3d', '#30c0b0'],
+      ['#1a003d', '#9050d0'], ['#1e1e1e', '#90a0b0']
+    ];
+
+    const MONTHS_S = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const TYPE_META = {
+      incident: { icon: '🚨', label: 'Incident', color: 'incident' },
+      warning: { icon: '⚠️', label: 'Warning', color: 'warning' },
+      positive: { icon: '⭐', label: 'Positive', color: 'positive' },
+      mail: { icon: '📧', label: 'Mail Ref', color: 'mail' },
+      note: { icon: '📝', label: 'Note', color: 'note' },
+      achievement: { icon: '🏆', label: 'Achievement', color: 'achievement' }
+    };
+
+    let register = {}; // { empName: [entries] }
+    let employees = []; // [ { name, id } ]
+    let currentEmp = null;
+    let currentFilter = 'all';
+    let selectedType = 'incident';
+    let modalPreset = null;
+
+    /* ═══════════════════════════════════════
+       TEAM ROSTER — Operations Team Register
+       BizProspex · 2025
+    ═══════════════════════════════════════ */
+    const IMPACT_OPS_ROSTER = [
+      { name: 'Payal Dulhani', id: 'IO-001', desig: 'L1', joined: '2025-01-01', team: 'Impact Ops' },
+      { name: 'Nafees Ansari', id: 'IO-002', desig: 'L1', joined: '2025-01-01', team: 'Impact Ops' },
+      { name: 'Konica Dalal', id: 'IO-003', desig: 'L1', joined: '2025-01-01', team: 'Impact Ops' },
+      { name: 'Rukhsar Ansari', id: 'IO-004', desig: 'L2', joined: '2025-01-01', team: 'Impact Ops' },
+      { name: 'Zubair Ansari', id: 'IO-005', desig: 'L2', joined: '2025-01-01', team: 'Impact Ops' },
+      { name: 'Priyanshi Konduwala', id: 'IO-006', desig: 'L2', joined: '2025-01-01', team: 'Impact Ops' },
+      { name: 'Mohtashim Bux', id: 'IO-007', desig: 'L2', joined: '2025-01-01', team: 'Impact Ops' },
+      { name: 'Bismillah Mohammad', id: 'IO-008', desig: 'L2', joined: '2025-01-01', team: 'Impact Ops' },
+      { name: 'Zulfhekhar Khan', id: 'IO-009', desig: 'L2', joined: '2025-01-01', team: 'Impact Ops' },
+      { name: 'Tausif Ansari', id: 'IO-010', desig: 'L2', joined: '2025-01-01', team: 'Impact Ops' },
+      { name: 'Yunus Khan', id: 'IO-011', desig: 'L3', joined: '2025-01-01', team: 'Impact Ops' },
+      { name: 'Himanshu Soni', id: 'IO-012', desig: 'L3', joined: '2025-01-01', team: 'Impact Ops' },
+      { name: 'Unnati Yawar', id: 'IO-013', desig: 'L3', joined: '2025-01-01', team: 'Impact Ops' },
+      { name: 'Haris Bilal', id: 'IO-014', desig: 'L3', joined: '2025-01-01', team: 'Impact Ops' },
+      { name: 'Imtiyaz Hanif', id: 'IO-015', desig: 'L3', joined: '2025-01-01', team: 'Impact Ops' },
+      { name: 'Mubeen Syed', id: 'IO-016', desig: 'L3', joined: '2025-01-01', team: 'Impact Ops' },
+      { name: 'Naba Naaz', id: 'IO-017', desig: 'L3', joined: '2025-01-01', team: 'Impact Ops' },
+      { name: 'Sameer Ahmed', id: 'IO-018', desig: 'L3', joined: '2025-01-01', team: 'Impact Ops' },
+      { name: 'Tushar Choudhary', id: 'IO-019', desig: 'L3', joined: '2025-01-01', team: 'Impact Ops' },
+      { name: 'Zeeshan Husain', id: 'IO-020', desig: 'L3', joined: '2025-01-01', team: 'Impact Ops' },
+      { name: 'Sheetal Padme', id: 'IO-021', desig: 'L4', joined: '2025-01-01', team: 'Impact Ops' },
+      { name: 'Izhar Ashraf', id: 'IO-022', desig: 'L4', joined: '2025-01-01', team: 'Impact Ops' },
+      { name: 'Hrushikesh Joshi', id: 'IO-023', desig: 'L4', joined: '2025-01-01', team: 'Impact Ops' },
+    ];
+    const PINNACLE_ROSTER = [
+      { name: 'Vikar Ali', id: 'PT-001', desig: 'TL', joined: '2025-01-01', team: 'Pinnacle Team' },
+      { name: 'Ahtesham Shaikh', id: 'PT-002', desig: 'L2', joined: '2025-01-01', team: 'Pinnacle Team' },
+      { name: 'Tausif Khan', id: 'PT-003', desig: 'L3', joined: '2025-01-01', team: 'Pinnacle Team' },
+      { name: 'Aamir Khan', id: 'PT-004', desig: 'L3', joined: '2025-01-01', team: 'Pinnacle Team' },
+      { name: 'Amaan Khan', id: 'PT-005', desig: 'L3', joined: '2025-01-01', team: 'Pinnacle Team' },
+      { name: 'Farhana Kausar', id: 'PT-006', desig: 'L4', joined: '2025-01-01', team: 'Pinnacle Team' },
+      { name: 'Sohail Ansari', id: 'PT-007', desig: 'L4', joined: '2025-01-01', team: 'Pinnacle Team' },
+      { name: 'Shoaib Ansari', id: 'PT-008', desig: 'L4', joined: '2025-01-01', team: 'Pinnacle Team' },
+      { name: 'Gunjan Choudhary', id: 'PT-009', desig: 'L4', joined: '2025-01-01', team: 'Pinnacle Team' },
+      { name: 'Asif Mohammad', id: 'PT-010', desig: 'L2', joined: '2025-01-01', team: 'Pinnacle Team' },
+    ];
+    const ALL_ROSTER = [...IMPACT_OPS_ROSTER, ...PINNACLE_ROSTER];
+
+    function getEmpTeam(name) {
+      const e = ALL_ROSTER.find(r => r.name === name);
+      return e ? e.team : '';
+    }
+    function getEmpDesig(name) {
+      const e = ALL_ROSTER.find(r => r.name === name);
+      return e ? e.desig : '';
+    }
+
+    async function initData() {
+      // ── Load employees from Supabase ──
+      const { data: empData, error: empErr } = await _supabase
+        .from('employees').select('*').order('id');
+
+      if (empErr) {
+        console.error('Supabase employees error:', empErr);
+        showToast('Failed to load employees from database', 'error', '⚠');
+        // Fallback to hardcoded roster
+        employees = ALL_ROSTER.map(r => ({ name: r.name, id: r.id, desig: r.desig, joined: r.joined, team: r.team }));
+        register = {};
+        ALL_ROSTER.forEach(r => { register[r.name] = []; });
+      } else {
+        employees = empData.map(r => ({ name: r.name, id: r.id, desig: r.desig, joined: r.joined, team: r.team }));
+        register = {};
+        employees.forEach(e => { register[e.name] = []; });
+
+        // ── Load all entries from Supabase ──
+        const { data: entData, error: entErr } = await _supabase
+          .from('entries').select('*').order('ts', { ascending: true });
+
+        if (!entErr && entData) {
+          entData.forEach(row => {
+            const entry = {
+              id: row.id,
+              type: row.type,
+              date: row.date,
+              title: row.title,
+              desc: row.desc || '',
+              mailSubject: row.mail_subject || '',
+              action: row.action || '',
+              severity: row.severity || 'medium',
+              refId: row.ref_id || '',
+              ts: row.ts
+            };
+            if (!register[row.employee_name]) register[row.employee_name] = [];
+            register[row.employee_name].push(entry);
+          });
+        }
+      }
+
+      renderList();
+      if (employees.length) selectEmployee(employees[0].name);
+    }
+
+    function saveData() {
+      // No-op: all persistence now happens via individual Supabase calls
+    }
+
+    function uid() {
+      return Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+    }
+
+    /* ════════════════════════════════════
+       CLOCK
+    ════════════════════════════════════ */
+    function updateClock() {
+      const d = new Date();
+      document.getElementById('clock').textContent =
+        d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) + ' · ' +
+        d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    }
+    setInterval(updateClock, 1000); updateClock();
+
+    /* ════════════════════════════════════
+       SIDEBAR
+    ════════════════════════════════════ */
+    function getInitials(name) {
+      return name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+    }
+
+    function getEntries(name) { return register[name] || []; }
+    function countType(name, type) { return getEntries(name).filter(e => e.type === type).length; }
+
+    function renderList(search = '') {
+      const list = document.getElementById('empList');
+      list.innerHTML = '';
+      let filtered = employees;
+      if (search) filtered = filtered.filter(e => e.name.toLowerCase().includes(search.toLowerCase()));
+      if (currentFilter === 'warned') filtered = filtered.filter(e => countType(e.name, 'warning') > 0 || countType(e.name, 'incident') > 0);
+      if (currentFilter === 'top') filtered = filtered.filter(e => countType(e.name, 'positive') + countType(e.name, 'achievement') > 0);
+
+      // Group by team
+      const TEAMS = ['Impact Ops', 'Pinnacle Team'];
+      const TEAM_META = {
+        'Impact Ops': { color: 'var(--gold)', label: 'Impact Ops', count: IMPACT_OPS_ROSTER.length },
+        'Pinnacle Team': { color: 'var(--teal)', label: 'Pinnacle Team', count: PINNACLE_ROSTER.length },
+      };
+
+      TEAMS.forEach(teamName => {
+        const teamEmps = filtered.filter(e => (e.team || getEmpTeam(e.name)) === teamName);
+        if (!teamEmps.length) return;
+
+        const tm = TEAM_META[teamName];
+        // Section header
+        const sec = document.createElement('div');
+        sec.className = 'sidebar-section-label';
+        sec.style.cssText = 'padding-top:12px;';
+        sec.innerHTML = `<span style="color:${tm.color};font-size:9px;letter-spacing:0.16em;">${tm.label}</span>`;
+        list.appendChild(sec);
+
+        teamEmps.forEach((emp) => {
+          const globalIdx = employees.indexOf(emp);
+          const [bg, fg] = AVATAR_COLORS[globalIdx % AVATAR_COLORS.length];
+          const warns = countType(emp.name, 'warning') + countType(emp.name, 'incident');
+          const pos = countType(emp.name, 'positive') + countType(emp.name, 'achievement');
+          const entries = getEntries(emp.name).length;
+          const net = pos - warns;
+          const scoreColor = net > 0 ? 'var(--green2)' : warns > 0 ? 'var(--warn)' : 'var(--ivory3)';
+          const desig = emp.desig || getEmpDesig(emp.name);
+          const team = emp.team || getEmpTeam(emp.name);
+          const teamColor = team === 'Impact Ops' ? 'var(--gold)' : 'var(--teal)';
+
+          const row = document.createElement('div');
+          row.className = 'emp-row' + (currentEmp === emp.name ? ' active' : '');
+          row.onclick = () => selectEmployee(emp.name);
+          row.innerHTML = `
+        <div class="er-avatar" style="background:${bg};color:${fg}">${getInitials(emp.name)}</div>
+        <div class="er-info">
+          <div class="er-name">${emp.name}</div>
+          <div class="er-meta" style="gap:4px;flex-wrap:wrap;">
+            <span style="background:color-mix(in srgb,${teamColor} 14%,transparent);color:${teamColor};padding:1px 5px;border-radius:3px;font-size:8px;letter-spacing:0.1em;font-weight:600;border:1px solid color-mix(in srgb,${teamColor} 28%,transparent);">${team}</span>
+            <span style="background:var(--surface3);color:var(--ivory3);padding:1px 5px;border-radius:3px;font-size:8px;letter-spacing:0.1em;">${desig}</span>
+            ${warns > 0 ? `<span class="er-warn-dot"></span>` : ''}
+            <span>${entries} entr${entries === 1 ? 'y' : 'ies'}</span>
+          </div>
+        </div>
+        <div class="er-badge" style="color:${scoreColor};background:color-mix(in srgb,${scoreColor} 12%,transparent)">
+          ${net >= 0 ? '+' : ''}${net}
+        </div>
+        <button class="emp-remove-btn" onclick="removeMember('${emp.name}',event)" title="Remove ${emp.name}">×</button>`;
+          list.appendChild(row);
+        });
+      });
+
+      // Update sidebar stats
+      let totalWarn = 0, totalPos = 0, totalInc = 0;
+      employees.forEach(e => {
+        totalWarn += countType(e.name, 'warning');
+        totalPos += countType(e.name, 'positive') + countType(e.name, 'achievement');
+        totalInc += countType(e.name, 'incident');
+      });
+      document.getElementById('ss-total').textContent = employees.length;
+      document.getElementById('ss-warn').textContent = totalWarn;
+      document.getElementById('ss-pos').textContent = totalPos;
+      document.getElementById('ss-inc').textContent = totalInc;
+    }
+
+    function filterEmp(type, btn) {
+      currentFilter = type;
+      document.querySelectorAll('.header-pill').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderList(document.getElementById('searchInput').value);
+    }
+
+    /* ════════════════════════════════════
+       SELECT EMPLOYEE
+    ════════════════════════════════════ */
+    function selectEmployee(name) {
+      currentEmp = name;
+      document.getElementById('welcomeState').style.display = 'none';
+      document.getElementById('empView').classList.add('active');
+      renderList(document.getElementById('searchInput').value);
+      renderHero();
+      renderAllPanels();
+      renderAnalytics();
+      renderEvaluation();
+      renderTimeline();
+    }
+
+    function renderHero() {
+      const emp = employees.find(e => e.name === currentEmp);
+      if (!emp) return;
+      const idx = employees.indexOf(emp);
+      const [bg, fg] = AVATAR_COLORS[idx % AVATAR_COLORS.length];
+      const desig = emp.desig || getEmpDesig(emp.name);
+      const team = emp.team || getEmpTeam(emp.name);
+      const teamColor = team === 'Impact Ops' ? 'var(--gold)' : 'var(--teal)';
+
+      document.getElementById('heroAvatar').style.cssText = `background:${bg};color:${fg}`;
+      document.getElementById('heroAvatar').textContent = getInitials(currentEmp);
+      document.getElementById('heroName').textContent = currentEmp;
+      document.getElementById('heroIdTag').textContent = emp.id;
+
+      // Inject team + designation tags into hero meta
+      const heroMeta = document.getElementById('heroMeta');
+      if (heroMeta) {
+        heroMeta.innerHTML = `
+      <span class="emp-hero-tag" style="border-color:color-mix(in srgb,${teamColor} 45%,transparent);color:${teamColor};background:color-mix(in srgb,${teamColor} 10%,transparent);">
+        ${team}
+      </span>
+      <span class="emp-hero-tag" style="border-color:var(--border2);color:var(--ivory2);">
+        ${desig}
+      </span>
+      <span class="emp-hero-tag" id="heroIdTag2">${emp.id}</span>
+    `;
+      }
+
+      // Grill decoration
+      const grill = document.getElementById('heroGrill');
+      grill.innerHTML = Array(48).fill('<span></span>').join('');
+
+      // KPIs
+      const entries = getEntries(currentEmp);
+      document.getElementById('kpiNet').textContent = (countType(currentEmp, 'positive') + countType(currentEmp, 'achievement')) - (countType(currentEmp, 'warning') + countType(currentEmp, 'incident'));
+      document.getElementById('kpiWarn').textContent = countType(currentEmp, 'warning');
+      document.getElementById('kpiInc').textContent = countType(currentEmp, 'incident');
+      document.getElementById('kpiPos').textContent = countType(currentEmp, 'positive');
+      document.getElementById('kpiMail').textContent = countType(currentEmp, 'mail');
+      document.getElementById('kpiAch').textContent = countType(currentEmp, 'achievement');
+
+      // Update tab counts
+      const all = entries.length;
+      const inc = countType(currentEmp, 'warning') + countType(currentEmp, 'incident');
+      const pos = countType(currentEmp, 'positive') + countType(currentEmp, 'achievement');
+      const mail = countType(currentEmp, 'mail');
+      document.getElementById('tc-register').textContent = all;
+      document.getElementById('tc-incidents').textContent = inc;
+      document.getElementById('tc-positives').textContent = pos;
+      document.getElementById('tc-mail').textContent = mail;
+    }
+
+    /* ════════════════════════════════════
+       RENDER PANELS
+    ════════════════════════════════════ */
+    function renderAllPanels() {
+      renderPanel('register', null);
+      renderPanel('incidents', ['warning', 'incident']);
+      renderPanel('positives', ['positive', 'achievement']);
+      renderPanel('mail', ['mail']);
+    }
+
+    function renderPanel(panelId, types) {
+      const container = document.getElementById(`list-${panelId}`);
+      const entries = getEntries(currentEmp)
+        .filter(e => !types || types.includes(e.type))
+        .sort((a, b) => b.date.localeCompare(a.date));
+
+      if (!entries.length) {
+        const empties = {
+          register: ['📋', 'No entries yet', 'Add an incident, warning, positive note, or mail reference to build this employee\'s register.'],
+          incidents: ['✅', 'No incidents on record', 'All clear. Any warnings or incidents will appear here with full evidence.'],
+          positives: ['⭐', 'No positives logged', 'Log exceptional contributions and achievements here.'],
+          mail: ['📬', 'No mail entries', 'Log all formal communications — warnings, HR notices, memos.']
+        };
+        const [ico, ttl, sub] = empties[panelId] || ['📋', 'No entries', '—'];
+        container.innerHTML = `<div class="empty-state"><div class="empty-icon">${ico}</div><div class="empty-title">${ttl}</div><div class="empty-sub">${sub}</div></div>`;
+        return;
+      }
+
+      container.innerHTML = entries.map(e => buildRecordCard(e)).join('');
+    }
+
+    function buildRecordCard(e) {
+      const m = TYPE_META[e.type] || TYPE_META.note;
+      const sevColors = { low: 'green', medium: 'blue', high: 'warn', critical: 'red' };
+      const sevColor = sevColors[e.severity] || 'blue';
+      return `
+    <div class="record-card ${m.color}" id="rc-${e.id}">
+      <div class="record-icon ${m.color}">${m.icon}</div>
+      <div class="record-body">
+        <div class="record-title">${e.title || 'Untitled Entry'}</div>
+        ${e.desc ? `<div class="record-desc">${e.desc}</div>` : ''}
+        <div class="record-tags">
+          <span class="record-tag ${m.color === 'warning' ? 'warn' : m.color === 'incident' ? 'red' : m.color === 'positive' ? 'green' : m.color === 'achievement' ? 'gold' : m.color === 'mail' ? 'purple' : 'blue'}">${m.label}</span>
+          <span class="record-tag ${sevColor}">${e.severity || 'medium'}</span>
+          ${e.mailSubject ? `<span class="record-tag purple">📧 ${e.mailSubject}</span>` : ''}
+          ${e.action ? `<span class="record-tag">→ ${e.action}</span>` : ''}
+        </div>
+      </div>
+      <div class="record-meta">
+        <span class="record-date">${e.date}</span>
+        <span class="record-id">${e.refId || '—'}</span>
+        <button class="record-del" onclick="deleteEntry('${e.id}')" title="Delete">✕</button>
+      </div>
+    </div>`;
+    }
+
+    /* ════════════════════════════════════
+       ANALYTICS
+    ════════════════════════════════════ */
+    function renderAnalytics() {
+      const entries = getEntries(currentEmp);
+
+      // Monthly bar chart (last 6 months)
+      const now = new Date();
+      const months = [], counts = [];
+      for (let i = 5; i >= 0; i--) {
+        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        months.push(MONTHS_S[d.getMonth()]);
+        const y = d.getFullYear(), m = d.getMonth();
+        counts.push(entries.filter(e => { const ed = new Date(e.date); return ed.getFullYear() === y && ed.getMonth() === m; }).length);
+      }
+      const maxC = Math.max(...counts, 1);
+      const chartEl = document.getElementById('monthChart');
+      const labelsEl = document.getElementById('monthLabels');
+      chartEl.innerHTML = counts.map((c, i) =>
+        `<div class="mc-bar" style="height:${Math.max(4, (c / maxC) * 56)}px;background:linear-gradient(180deg,var(--gold) 0%,var(--gold-dim) 100%)" data-val="${months[i]}: ${c}"></div>`
+      ).join('');
+      labelsEl.innerHTML = months.map(m => `<div class="mc-label">${m}</div>`).join('');
+
+      // Donut
+      const types = ['incident', 'warning', 'positive', 'mail', 'note', 'achievement'];
+      const typeColors = { incident: '#e74c3c', warning: '#f39c12', positive: '#2ecc71', mail: '#8e44ad', note: '#3498db', achievement: '#c9a84c' };
+      const typeCounts = types.map(t => countType(currentEmp, t)).map(c => Math.max(c, 0));
+      const total = typeCounts.reduce((a, b) => a + b, 0) || 1;
+      const svg = document.getElementById('donutSvg');
+      let offset = 0, paths = '';
+      const r = 35, cx = 50, cy = 50, strokeW = 18;
+      const circum = 2 * Math.PI * r;
+      typeCounts.forEach((c, i) => {
+        if (!c) return;
+        const pct = c / total;
+        const dash = pct * circum;
+        paths += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${typeColors[types[i]]}" stroke-width="${strokeW}" stroke-dasharray="${dash} ${circum - dash}" stroke-dashoffset="${-offset * circum}" transform="rotate(-90 50 50)" opacity="0.85"/>`;
+        offset += pct;
+      });
+      svg.innerHTML = paths + `<text x="50" y="54" text-anchor="middle" font-family="Playfair Display,serif" font-size="16" fill="#f0ead8" font-weight="700">${total}</text>`;
+
+      const legend = document.getElementById('donutLegend');
+      legend.innerHTML = types.filter((_, i) => typeCounts[i] > 0).map(t => `
+    <div class="dl-item">
+      <div class="dl-dot" style="background:${typeColors[t]}"></div>
+      <span class="dl-label">${TYPE_META[t].label}</span>
+      <span class="dl-val">${countType(currentEmp, t)}</span>
+    </div>`).join('');
+
+      // Trend line
+      const trendData = months.map((_, i) => {
+        const idx = counts.length - 6 + i;
+        const c = counts[Math.max(0, idx)] || 0;
+        return c;
+      });
+      const maxT = Math.max(...trendData, 1);
+      const svgW = 600, svgH = 80, pad = 10;
+      const pts = trendData.map((v, i) => `${pad + i * (svgW - 2 * pad) / (trendData.length - 1)},${svgH - pad - (v / maxT) * (svgH - 2 * pad)}`).join(' ');
+      const trendSvg = document.getElementById('trendSvg');
+      trendSvg.innerHTML = `
+    <defs><linearGradient id="tg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#c9a84c" stop-opacity="0.3"/><stop offset="100%" stop-color="#c9a84c" stop-opacity="0"/></linearGradient></defs>
+    <polygon points="${pts} ${svgW - pad},${svgH} ${pad},${svgH}" fill="url(#tg)"/>
+    <polyline points="${pts}" fill="none" stroke="#c9a84c" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+    ${trendData.map((v, i) => `<circle cx="${pad + i * (svgW - 2 * pad) / (trendData.length - 1)}" cy="${svgH - pad - (v / maxT) * (svgH - 2 * pad)}" r="3" fill="#c9a84c"/>`).join('')}`;
+
+      // Month summary
+      const nowM = now.getMonth(), nowY = now.getFullYear();
+      const thisMonth = entries.filter(e => { const d = new Date(e.date); return d.getFullYear() === nowY && d.getMonth() === nowM; });
+      const sumEl = document.getElementById('monthSummary');
+      const mByType = {};
+      thisMonth.forEach(e => { mByType[e.type] = (mByType[e.type] || 0) + 1; });
+      sumEl.innerHTML = Object.entries(mByType).length ?
+        Object.entries(mByType).map(([t, c]) => `
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <span style="font-size:13px;color:var(--ivory2)">${TYPE_META[t]?.icon} ${TYPE_META[t]?.label || t}</span>
+        <span class="mono" style="font-size:12px;color:var(--gold)">${c}</span>
+      </div>`).join('')
+        : '<div style="font-size:13px;color:var(--ivory3);text-align:center;padding:12px 0">No entries this month</div>';
+
+      // Ratios
+      const inc = countType(currentEmp, 'incident') + countType(currentEmp, 'warning');
+      const pos = countType(currentEmp, 'positive') + countType(currentEmp, 'achievement');
+      const all = entries.length || 1;
+      const ratEl = document.getElementById('ratioPanel');
+      const bars = [
+        { lbl: 'Positive Rate', val: pos, total: all, color: 'var(--green2)' },
+        { lbl: 'Incident Rate', val: inc, total: all, color: 'var(--red2)' },
+        { lbl: 'Mail Activity', val: countType(currentEmp, 'mail'), total: all, color: 'var(--purple)' },
+      ];
+      ratEl.innerHTML = bars.map(b => `
+    <div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+        <span style="font-size:12px;color:var(--ivory2)">${b.lbl}</span>
+        <span class="mono" style="font-size:10px;color:var(--ivory3)">${b.total > 0 ? Math.round(b.val / b.total * 100) : 0}%</span>
+      </div>
+      <div style="height:5px;background:var(--surface3);border-radius:3px;overflow:hidden">
+        <div style="height:100%;width:${b.total > 0 ? b.val / b.total * 100 : 0}%;background:${b.color};border-radius:3px;transition:width 1s ease"></div>
+      </div>
+    </div>`).join('');
+    }
+
+    /* ════════════════════════════════════
+       EVALUATION
+    ════════════════════════════════════ */
+    function renderEvaluation() {
+      const entries = getEntries(currentEmp);
+      const inc = countType(currentEmp, 'incident') + countType(currentEmp, 'warning');
+      const pos = countType(currentEmp, 'positive') + countType(currentEmp, 'achievement');
+      const net = pos - inc;
+      const all = entries.length;
+
+      // Score & grade
+      let grade, gradeColor, gradeLabel;
+      if (net >= 5) { grade = 'A+'; gradeColor = 'var(--gold)'; gradeLabel = 'Exceptional Performer'; }
+      else if (net >= 3) { grade = 'A'; gradeColor = 'var(--green2)'; gradeLabel = 'Strong Performer'; }
+      else if (net >= 1) { grade = 'B+'; gradeColor = 'var(--blue2)'; gradeLabel = 'Above Average'; }
+      else if (net === 0) { grade = 'B'; gradeColor = 'var(--ivory2)'; gradeLabel = 'Consistent Baseline'; }
+      else if (net >= -2) { grade = 'C'; gradeColor = 'var(--warn)'; gradeLabel = 'Needs Improvement'; }
+      else { grade = 'D'; gradeColor = 'var(--red2)'; gradeLabel = 'Requires Action'; }
+
+      const notes = net >= 3
+        ? 'This employee demonstrates consistent positive contributions and initiative beyond their role expectations. Recommended for recognition.'
+        : net >= 0
+          ? 'Performance is meeting baseline expectations. No critical concerns. Focus on building positive contributions.'
+          : 'Multiple incidents or warnings on record. A structured performance improvement plan is recommended. Review with HR.';
+
+      document.getElementById('evalSummary').innerHTML = `
+    <div class="eval-rating">
+      <div class="eval-score-big" style="color:${gradeColor}">${grade}</div>
+      <div class="eval-grade-info">
+        <div class="eval-grade" style="color:${gradeColor}">${gradeLabel}</div>
+        <div class="eval-grade-sub">NET SCORE ${net >= 0 ? '+' : ''}${net} · ${all} TOTAL ENTRIES · ${getEmpTeam(currentEmp).toUpperCase() || 'IMPACT OPS'} · 2025</div>
+        <div style="margin-top:8px;font-size:13px;color:var(--ivory2);line-height:1.7">${notes}</div>
+      </div>
+    </div>
+  `;
+
+      const barsEl = document.getElementById('evalBars');
+      const maxV = Math.max(inc, pos, all, 1);
+      barsEl.innerHTML = `
+    <div class="ac-title" style="margin-bottom:12px">Performance Breakdown</div>
+    ${[
+          { lbl: 'Positive Contributions', val: pos, color: 'var(--green2)' },
+          { lbl: 'Incidents & Warnings', val: inc, color: 'var(--red2)' },
+          { lbl: 'Mail References', val: countType(currentEmp, 'mail'), color: 'var(--purple)' },
+          { lbl: 'Notes & Other', val: countType(currentEmp, 'note'), color: 'var(--blue2)' },
+          { lbl: 'Total Entries', val: all, color: 'var(--gold)' },
+        ].map(b => `
+      <div class="eval-bar-row">
+        <div class="eval-bar-label">${b.lbl}</div>
+        <div class="eval-bar-track"><div class="eval-bar-fill" style="width:${Math.round(b.val / maxV * 100)}%;background:${b.color}"></div></div>
+        <div class="eval-bar-pct">${b.val}</div>
+      </div>`).join('')}
+  `;
+    }
+
+    /* ════════════════════════════════════
+       TIMELINE
+    ════════════════════════════════════ */
+    function renderTimeline() {
+      const entries = getEntries(currentEmp).sort((a, b) => b.date.localeCompare(a.date));
+      const el = document.getElementById('timelineList');
+      if (!entries.length) {
+        el.innerHTML = '<div class="empty-state" style="padding-left:0"><div class="empty-icon">📅</div><div class="empty-title">Empty Timeline</div><div class="empty-sub">All entries appear here in chronological order.</div></div>';
+        return;
+      }
+      el.innerHTML = entries.map(e => {
+        const m = TYPE_META[e.type] || TYPE_META.note;
+        return `<div class="tl-item ${m.color}">
+      <div class="tl-dot"></div>
+      <div class="tl-date">${e.date} · ${m.icon} ${m.label} · ${e.refId || '—'}</div>
+      <div class="tl-title">${e.title || 'Untitled'}</div>
+      ${e.desc ? `<div class="tl-desc">${e.desc}</div>` : ''}
+      ${e.mailSubject ? `<div style="margin-top:4px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--purple);padding:4px 8px;background:var(--purple-dim);border-radius:4px;display:inline-block">📧 ${e.mailSubject}</div>` : ''}
+    </div>`;
+      }).join('');
+    }
+
+    /* ════════════════════════════════════
+       MODAL
+    ════════════════════════════════════ */
+    function openAddEntry(preset = null) {
+      modalPreset = preset;
+      const today = new Date().toISOString().slice(0, 10);
+      document.getElementById('fDate').value = today;
+      document.getElementById('fDate').max = today;
+      document.getElementById('fRefId').value = autoRefId(preset || 'note');
+      document.getElementById('fTitle').value = '';
+      document.getElementById('fDesc').value = '';
+      document.getElementById('fMailSubject').value = '';
+      document.getElementById('fAction').value = '';
+      document.getElementById('fSeverity').value = 'medium';
+      // Select type
+      document.querySelectorAll('.type-opt').forEach(o => o.classList.remove('selected'));
+      const toSelect = preset || 'incident';
+      const typeEl = document.querySelector(`.type-opt[data-type="${toSelect}"]`);
+      if (typeEl) { typeEl.classList.add('selected'); selectedType = toSelect; }
+      document.getElementById('modalOverlay').classList.add('open');
+    }
+    function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+    function selectType(type, el) {
+      selectedType = type;
+      document.querySelectorAll('.type-opt').forEach(o => o.classList.remove('selected'));
+      el.classList.add('selected');
+      // Auto-fill refId
+      document.getElementById('fRefId').value = autoRefId(type);
+    }
+    function autoRefId(type) {
+      const prefix = { incident: 'INC', warning: 'WARN', positive: 'POS', mail: 'MAIL', note: 'NOTE', achievement: 'ACH' };
+      const d = new Date();
+      const seq = String(Math.floor(Math.random() * 900) + 100);
+      return `${prefix[type] || 'REF'}-${d.getFullYear()}-${seq}`;
+    }
+
+    function addWarning() { openAddEntry('warning'); }
+
+    async function saveEntry() {
+      if (!currentEmp) { showToast('Select an employee first', 'error', '⚠'); return; }
+      const title = document.getElementById('fTitle').value.trim();
+      const date = document.getElementById('fDate').value;
+      if (!title) { showToast('Please add a title', 'error', '⚠'); return; }
+      if (!date) { showToast('Please select a date', 'error', '⚠'); return; }
+
+      const entryId = uid();
+      const tsNow = Date.now();
+      const entry = {
+        id: entryId,
+        type: selectedType,
+        date,
+        title,
+        desc: document.getElementById('fDesc').value.trim(),
+        mailSubject: document.getElementById('fMailSubject').value.trim(),
+        action: document.getElementById('fAction').value.trim(),
+        severity: document.getElementById('fSeverity').value,
+        refId: document.getElementById('fRefId').value.trim(),
+        ts: tsNow
+      };
+
+      // ── Save to Supabase on single click ──
+      const { error } = await _supabase.from('entries').insert({
+        id: entryId,
+        employee_name: currentEmp,
+        type: selectedType,
+        date,
+        title: entry.title,
+        "desc": entry.desc,
+        mail_subject: entry.mailSubject,
+        action: entry.action,
+        severity: entry.severity,
+        ref_id: entry.refId,
+        ts: tsNow
+      });
+      if (error) { showToast('DB Error: ' + error.message, 'error', '⚠'); return; }
+
+      if (!register[currentEmp]) register[currentEmp] = [];
+      register[currentEmp].push(entry);
+      closeModal();
+      renderHero();
+      renderAllPanels();
+      renderAnalytics();
+      renderEvaluation();
+      renderTimeline();
+      renderList(document.getElementById('searchInput').value);
+
+      const m = TYPE_META[selectedType];
+      showToast(`${m.icon} ${m.label} entry saved to register`, 'success', '✓');
+      if (selectedType === 'warning') showToast('⚠ Warning stamped and evidence recorded', 'warn', '⚠');
+    }
+
+    async function deleteEntry(id) {
+      if (!confirm('Remove this entry from the register? This cannot be undone.')) return;
+
+      // ── Delete from Supabase ──
+      const { error } = await _supabase.from('entries').delete().eq('id', id);
+      if (error) { showToast('DB Error: ' + error.message, 'error', '⚠'); return; }
+
+      register[currentEmp] = (register[currentEmp] || []).filter(e => e.id !== id);
+      renderHero();
+      renderAllPanels();
+      renderAnalytics();
+      renderEvaluation();
+      renderTimeline();
+      renderList(document.getElementById('searchInput').value);
+      showToast('Entry removed from register', 'info', '🗑');
+    }
+
+    /* ════════════════════════════════════
+       TABS
+    ════════════════════════════════════ */
+    function switchTab(id, btn) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(`panel-${id}`).classList.add('active');
+    }
+
+    /* ════════════════════════════════════
+       TOAST
+    ════════════════════════════════════ */
+    let toastTimer;
+    function showToast(msg, type = 'info', icon = '•') {
+      const t = document.getElementById('toast');
+      document.getElementById('toastMsg').textContent = msg;
+      document.getElementById('toastIcon').textContent = icon;
+      t.className = `toast ${type} show`;
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.remove('show'), 3500);
+    }
+
+    /* ════════════════════════════════════
+       KEYBOARD
+    ════════════════════════════════════ */
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        if (document.getElementById('amOverlay').classList.contains('open')) closeAddMember();
+        else closeModal();
+      }
+      if (e.key === 'n' && e.ctrlKey) { e.preventDefault(); openAddEntry(); }
+      if (e.key === 'm' && e.ctrlKey) { e.preventDefault(); openAddMember(); }
+    });
+    document.getElementById('modalOverlay').addEventListener('click', e => {
+      if (e.target === document.getElementById('modalOverlay')) closeModal();
+    });
+    document.getElementById('amOverlay').addEventListener('click', e => {
+      if (e.target === document.getElementById('amOverlay')) closeAddMember();
+    });
+
+    /* ════════════════════════════════════
+       START
+    ════════════════════════════════════ */
+    // ── Bootstrap: load from Supabase then render ──
+    initData();
+  </script>
+</body>
+
+</html>

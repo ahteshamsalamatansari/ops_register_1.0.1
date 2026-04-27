@@ -1,0 +1,10 @@
+{
+  "name": "ops-register",
+  "version": "1.0.1",
+  "description": "Operations Team Register — BizProspex",
+  "private": true,
+  "scripts": {
+    "dev": "npx serve .",
+    "build": "echo 'Static site — no build step required'"
+  }
+}
