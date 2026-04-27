@@ -101,7 +101,15 @@ INSERT INTO employees (id, name, desig, joined, team) VALUES
   ('PT-010', 'Asif Mohammad',       'L2', '2025-01-01', 'Pinnacle Team')
 ON CONFLICT (id) DO NOTHING;
 
+-- ────────────────────────────────────
+--  ENABLE REALTIME (required for live updates)
+--  This lets the JS client receive live INSERT/UPDATE/DELETE events
+-- ────────────────────────────────────
+ALTER PUBLICATION supabase_realtime ADD TABLE employees;
+ALTER PUBLICATION supabase_realtime ADD TABLE entries;
+
 -- ════════════════════════════════════
 --  DONE! Your database is ready.
 --  Total: 33 employees seeded.
+--  Realtime enabled on both tables.
 -- ════════════════════════════════════

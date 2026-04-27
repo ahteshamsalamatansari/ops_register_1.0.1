@@ -3899,7 +3899,95 @@
        START
     ════════════════════════════════════ */
     // ── Bootstrap: load from Supabase then render ──
-    initData();
+    initData().then(() => {
+      // ── Enable LIVE real-time updates ──
+      setupRealtimeSubscriptions();
+    });
+
+    function setupRealtimeSubscriptions() {
+      // Subscribe to employees table changes
+      _supabase
+        .channel('employees-changes')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'employees' }, (payload) => {
+          handleEmployeeChange(payload);
+        })
+        .subscribe();
+
+      // Subscribe to entries table changes
+      _supabase
+        .channel('entries-changes')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'entries' }, (payload) => {
+          handleEntryChange(payload);
+        })
+        .subscribe();
+    }
+
+    function handleEmployeeChange(payload) {
+      const { eventType, new: newRow, old: oldRow } = payload;
+
+      if (eventType === 'INSERT') {
+        // Only add if not already in local list (avoid duplication from own actions)
+        if (!employees.find(e => e.id === newRow.id)) {
+          employees.push({ name: newRow.name, id: newRow.id, desig: newRow.desig, joined: newRow.joined, team: newRow.team });
+          register[newRow.name] = register[newRow.name] || [];
+          renderList(document.getElementById('searchInput').value);
+          document.getElementById('ss-total').textContent = employees.length;
+          showToast(`🔴 LIVE: ${newRow.name} added by another session`, 'info', '👤');
+        }
+      } else if (eventType === 'DELETE') {
+        const empName = oldRow.name;
+        if (employees.find(e => e.name === empName)) {
+          employees = employees.filter(ep => ep.name !== empName);
+          delete register[empName];
+          if (currentEmp === empName) {
+            currentEmp = null;
+            document.getElementById('welcomeState').style.display = '';
+            document.getElementById('empView').classList.remove('active');
+          }
+          renderList(document.getElementById('searchInput').value);
+          document.getElementById('ss-total').textContent = employees.length;
+          showToast(`🔴 LIVE: ${empName} removed by another session`, 'info', '🗑');
+        }
+      }
+    }
+
+    function handleEntryChange(payload) {
+      const { eventType, new: newRow, old: oldRow } = payload;
+
+      if (eventType === 'INSERT') {
+        const empName = newRow.employee_name;
+        // Only add if not already in local register (avoid duplication from own actions)
+        if (register[empName] && !register[empName].find(e => e.id === newRow.id)) {
+          register[empName].push({
+            id: newRow.id, type: newRow.type, date: newRow.date,
+            title: newRow.title, desc: newRow.desc || '',
+            mailSubject: newRow.mail_subject || '', action: newRow.action || '',
+            severity: newRow.severity || 'medium', refId: newRow.ref_id || '', ts: newRow.ts
+          });
+          // Re-render if viewing this employee
+          if (currentEmp === empName) {
+            renderHero(); renderAllPanels(); renderAnalytics(); renderEvaluation(); renderTimeline();
+          }
+          renderList(document.getElementById('searchInput').value);
+          showToast(`🔴 LIVE: New ${newRow.type} entry for ${empName}`, 'info', '📋');
+        }
+      } else if (eventType === 'DELETE') {
+        const entryId = oldRow.id;
+        // Find which employee this entry belonged to and remove it
+        for (const empName in register) {
+          const idx = register[empName].findIndex(e => e.id === entryId);
+          if (idx !== -1) {
+            register[empName].splice(idx, 1);
+            if (currentEmp === empName) {
+              renderHero(); renderAllPanels(); renderAnalytics(); renderEvaluation(); renderTimeline();
+            }
+            renderList(document.getElementById('searchInput').value);
+            showToast(`🔴 LIVE: Entry deleted for ${empName}`, 'info', '🗑');
+            break;
+          }
+        }
+      }
+    }
   </script>
 </body>
 
